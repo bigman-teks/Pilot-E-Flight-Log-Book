@@ -333,7 +333,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
 
     <!-- DOWNLOAD BUTTON ON LOGIN SCREEN -->
     <div style="margin-top:1.25rem;text-align:center;border-top:1px solid var(--border);padding-top:1rem">
-      <button class="btn btn-outline btn-sm" onclick="downloadApp()">⬇ Download App (HTML File)</button>
+      <!-- Download HTML button removed — use PWA install instead -->
       <div class="sm mut" style="margin-top:.35rem">Works offline on any device</div>
     </div>
   </div>
@@ -358,7 +358,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
           <div class="un" id="sb-name">Loading…</div>
           <div class="ur" id="sb-role">Pilot</div>
         </div>
-        <span style="cursor:pointer;color:var(--text3);font-size:1rem" title="Logout" onclick="doLogout()">🚪</span>
+        <button class="btn btn-red btn-sm" onclick="confirmLogout()" style="font-size:.68rem;padding:.22rem .55rem" title="Sign out">🚪 Logout</button>
       </div>
     </div>
   </div>
@@ -374,7 +374,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
       <span class="role-chip" id="tb-role-chip">Pilot</span>
       <div class="nb" onclick="goPanel('notifications')">🔔<span class="nb-dot hidden" id="nb-dot"></span></div>
       <div class="av" id="tb-av" style="cursor:pointer;width:30px;height:30px;font-size:.68rem" onclick="goPanel('profile')">P</div>
-      <button class="btn btn-outline btn-sm" onclick="downloadApp()" title="Download app as HTML file" style="font-size:.7rem;padding:.28rem .6rem">⬇ Download</button>
+      <button class="btn btn-red btn-sm" onclick="confirmLogout()" title="Sign out" style="font-size:.7rem;padding:.28rem .75rem;display:flex;align-items:center;gap:.3rem">🚪 Logout</button>
       <button class="btn btn-gold btn-sm" onclick="pwaInstall&&pwaInstall()" title="Install as app on this device" style="font-size:.7rem;padding:.28rem .6rem" id="tb-install-btn">📲 Install</button>
     </div>
   </div>
@@ -839,7 +839,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
 <!-- Firebase SDK -->
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,sendPasswordResetEmail}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,sendPasswordResetEmail,browserSessionStoragePersistence,setPersistence}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import{getFirestore,collection,doc,setDoc,getDoc,getDocs,addDoc,updateDoc,deleteDoc,query,where,orderBy,limit,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import{getStorage,ref,uploadBytes,getDownloadURL}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
@@ -864,6 +864,9 @@ const firebaseConfig = {
 
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
+// SESSION persistence — user must log in every time they open the app
+// Closing the tab/browser always returns them to the login screen
+setPersistence(auth, browserSessionStoragePersistence).catch(e => console.warn('[Auth] setPersistence failed:', e));
 const db=getFirestore(app);
 const storage=getStorage(app);
 
@@ -1038,9 +1041,27 @@ window.doRegister=async()=>{
 window.doLogout=async()=>{
   try{await logAudit('LOGOUT',(CU?.email||'Unknown')+' signed out');}catch(e){}
   CU=null;CP=null;
-  showAuth();          // Show login screen immediately
+  showAuth();
   try{await signOut(auth);}catch(e){console.error('signOut error:',e);}
-  authMsg('You have been signed out.','s');
+  authMsg('You have been signed out successfully.','s');
+};
+
+window.confirmLogout=()=>{
+  // Simple inline confirmation — avoids native confirm() which is blocked in some PWA contexts
+  const existing=G('logout-confirm-toast');
+  if(existing){existing.remove();return;}
+  const div=document.createElement('div');
+  div.id='logout-confirm-toast';
+  div.style.cssText='position:fixed;top:68px;right:1rem;z-index:9999;background:#132540;border:1px solid #D4AF37;border-radius:10px;padding:.9rem 1.1rem;min-width:220px;box-shadow:0 4px 20px rgba(0,0,0,.5)';
+  div.innerHTML=`
+    <div style="font-size:.82rem;font-weight:700;color:#E8EDF5;margin-bottom:.6rem">Sign out of 115 SOG Pilot E-Logbook?</div>
+    <div style="display:flex;gap:.5rem">
+      <button onclick="doLogout()" style="flex:1;background:#ef4444;color:#fff;border:none;border-radius:7px;padding:.45rem;font-size:.78rem;font-weight:700;cursor:pointer">Yes, Sign Out</button>
+      <button onclick="this.closest('#logout-confirm-toast').remove()" style="flex:1;background:transparent;color:#94A3B8;border:1px solid #1E3A5F;border-radius:7px;padding:.45rem;font-size:.78rem;cursor:pointer">Cancel</button>
+    </div>`;
+  document.body.appendChild(div);
+  // Auto-dismiss after 8 seconds
+  setTimeout(()=>{if(G('logout-confirm-toast'))G('logout-confirm-toast').remove();},8000);
 };
 window.doForgot=()=>{const e=V('l-email')||prompt('Enter your email:');if(!e)return;sendPasswordResetEmail(auth,e).then(()=>authMsg('Reset email sent','s')).catch(err=>authMsg(fErr(err),'d'));};
 window.showDemo=()=>authMsg('Register an account to start. Use Super Administrator role for full access.','i');
