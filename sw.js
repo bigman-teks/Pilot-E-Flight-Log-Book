@@ -9,13 +9,13 @@
  *  - Everything else → Network-first with cache fallback
  */
 
-const CACHE_NAME    = 'naf-elogbook-v1';
-const CDN_CACHE     = 'naf-elogbook-cdn-v1';
-const OFFLINE_PAGE  = './naf_eflightlog_pwa.html';
+const CACHE_NAME    = 'pilot-elogbook-v1';
+const CDN_CACHE     = 'pilot-elogbook-cdn-v1';
+const OFFLINE_PAGE  = './pilot_eflightlog_pwa.html';
 
 // App shell — always try to keep fresh
 const APP_SHELL = [
-  './naf_eflightlog_pwa.html',
+  './pilot_eflightlog_pwa.html',
   './manifest.json',
 ];
 
@@ -196,7 +196,7 @@ function offlinePage() {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#003366">
-<title>NAF E-Logbook — Offline</title>
+<title>115 SOG Pilot E-Logbook — Offline</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Segoe UI',system-ui,sans-serif;background:#0A192F;color:#E8EDF5;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:1.5rem}
