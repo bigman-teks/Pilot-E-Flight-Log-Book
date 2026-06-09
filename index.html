@@ -839,7 +839,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
 <!-- Firebase SDK -->
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,sendPasswordResetEmail,browserSessionStoragePersistence,setPersistence}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,sendPasswordResetEmail,}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import{getFirestore,collection,doc,setDoc,getDoc,getDocs,addDoc,updateDoc,deleteDoc,query,where,orderBy,limit,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import{getStorage,ref,uploadBytes,getDownloadURL}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
@@ -864,9 +864,9 @@ const firebaseConfig = {
 
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
-// SESSION persistence — user must log in every time they open the app
-// Closing the tab/browser always returns them to the login screen
-setPersistence(auth, browserSessionStoragePersistence).catch(e => console.warn('[Auth] setPersistence failed:', e));
+// Always force logout on page load — user must log in every visit
+// We sign out immediately before setting up the auth listener
+signOut(auth).catch(()=>{}); // fire-and-forget, ignore errors
 const db=getFirestore(app);
 const storage=getStorage(app);
 
@@ -960,7 +960,7 @@ setTimeout(() => {
     showAuth();
     authMsg('Connection timeout. Check your internet connection and try again.', 'd');
   }
-}, 10000);
+}, 4000);
 
 // ════════════════════════════════════════════
 // AUTH ACTIONS
