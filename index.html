@@ -299,7 +299,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
       <button class="btn btn-gold btn-full mt2" onclick="doLogin()" id="l-btn">SIGN IN</button>
       <div style="display:flex;justify-content:space-between;margin-top:.75rem">
         <span class="lnk" onclick="doForgot()">Forgot password?</span>
-        <span class="lnk" onclick="showDemo()">Demo credentials</span>
+        
       </div>
     </div>
 
@@ -308,7 +308,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
       <div class="frow">
         <div class="fg"><label>Service Number *</label><input type="text" id="r-sn" placeholder="NAF/12345"></div>
         <div class="fg"><label>Rank *</label>
-          <select id="r-rank">
+          <select id="r-rank"><option>ACM</option>
             <option>AirMsh</option>
             <option>AVM</option>
             <option>Air Cdre</option>
@@ -316,7 +316,8 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
             <option>Wg Cdr</option>
             <option>Sqn Ldr</option>
             <option>Flt Lt</option>
-            <option>Fg Offr</option>
+            <option>Flg Off</option>
+            <option>Plt Off</option>
           </select>
         </div>
       </div>
@@ -497,15 +498,17 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
             <div class="frow">
               <div class="fg"><label>Rank</label>
                 <select id="pf-rank">
-                    <option>AirMsh</option>
-                    <option>AVM</option>
-                    <option>Air Cdre</option>
-                    <option>Gp Capt</option>
-                    <option>Wg Cdr</option>
-                    <option>Sqn Ldr</option>
-                    <option>Flt Lt</option>
-                    <option>Fg Offr</option>
-                </select></div>
+                <option>AirMsh</option>
+                <option>AVM</option>
+                <option>Air Cdre</option>
+                <option>Gp Capt</option>
+                <option>Wg Cdr</option>
+                <option>Sqn Ldr</option>
+                <option>Flt Lt</option>
+                <option>Flg Off</option>
+                <option>Plt Off</option>
+              </select>
+            </div>
               <div class="fg"><label>Gender</label><select id="pf-gender"><option>Male</option><option>Female</option></select></div>
             </div>
             <div class="frow">
@@ -1131,7 +1134,7 @@ window.confirmLogout=()=>{
   setTimeout(()=>{if(G('logout-confirm-toast'))G('logout-confirm-toast').remove();},8000);
 };
 window.doForgot=()=>{const e=V('l-email')||prompt('Enter your email:');if(!e)return;sendPasswordResetEmail(auth,e).then(()=>authMsg('Reset email sent','s')).catch(err=>authMsg(fErr(err),'d'));};
-window.showDemo=()=>authMsg('Register an account to start. Use Super Administrator role for full access.','i');
+
 
 // ════════════════════════════════════════════
 // LOAD PROFILE
