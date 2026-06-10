@@ -515,6 +515,55 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
           </div>
         </div>
       </div>
+
+      <!-- ── CARRY-FORWARD HOURS ─────────────────────────────────── -->
+      <div class="card mt2">
+        <div class="card-t mb1">
+          🕐 Carry-Forward Hours
+          <span style="font-size:.72rem;font-weight:400;color:var(--text3);margin-left:.5rem">— Prior flying hours before using this logbook</span>
+        </div>
+        <div style="font-size:.78rem;color:var(--text2);margin-bottom:1rem;line-height:1.6;background:var(--bg3);border-radius:8px;padding:.65rem .85rem;border-left:3px solid var(--gold)">
+          Enter your existing flying hours per aircraft type. These are added to your logbook totals on the dashboard and reports, but are stored separately from individual flight entries.
+        </div>
+
+        <!-- Per-aircraft carry-forward rows -->
+        <div id="cf-rows" style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:.85rem"></div>
+
+        <!-- Add aircraft row -->
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:flex-end">
+          <div class="fg" style="flex:2;min-width:140px;margin:0">
+            <label style="font-size:.72rem">Aircraft Type</label>
+            <select id="cf-ac-select" style="width:100%">
+              <option value="">— Select Aircraft —</option>
+            </select>
+          </div>
+          <div class="fg" style="flex:1;min-width:90px;margin:0">
+            <label style="font-size:.72rem">Total Hours (HH:MM)</label>
+            <input type="text" id="cf-hrs" placeholder="00:00" maxlength="5" pattern="\d{1,4}:\d{2}" style="width:100%;font-family:monospace" oninput="fmtCFTime(this)">
+          </div>
+          <div class="fg" style="flex:1;min-width:90px;margin:0">
+            <label style="font-size:.72rem">Captain (PIC) HH:MM</label>
+            <input type="text" id="cf-pic" placeholder="00:00" maxlength="5" pattern="\d{1,4}:\d{2}" style="width:100%;font-family:monospace" oninput="fmtCFTime(this)">
+          </div>
+          <div class="fg" style="flex:1;min-width:90px;margin:0">
+            <label style="font-size:.72rem">Co-Pilot HH:MM</label>
+            <input type="text" id="cf-cop" placeholder="00:00" maxlength="5" pattern="\d{1,4}:\d{2}" style="width:100%;font-family:monospace" oninput="fmtCFTime(this)">
+          </div>
+          <div class="fg" style="flex:1;min-width:80px;margin:0">
+            <label style="font-size:.72rem">Night HH:MM</label>
+            <input type="text" id="cf-night" placeholder="00:00" maxlength="5" pattern="\d{1,4}:\d{2}" style="width:100%;font-family:monospace" oninput="fmtCFTime(this)">
+          </div>
+          <button class="btn btn-gold btn-sm" onclick="addCFRow()" style="margin-bottom:2px;white-space:nowrap">+ Add</button>
+        </div>
+
+        <div class="dv mt1"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-top:.75rem">
+          <div id="cf-total-display" style="font-size:.8rem;color:var(--text2)">Total carry-forward: <strong style="color:var(--gold)">0.0 hrs</strong></div>
+          <button class="btn btn-gold btn-sm" onclick="saveCF()">💾 Save Carry-Forward Hours</button>
+        </div>
+        <div id="cf-msg" style="margin-top:.5rem"></div>
+      </div>
+
     </div>
 
     <!-- ───────────────── NEW FLIGHT ───────────────── -->
@@ -528,13 +577,12 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
         <div class="fsec"><div class="fsec-t">Flight Details</div>
           <div class="fgrid">
             <div class="fg"><label>Flight Date *</label><input type="date" id="ff-date"></div>
-            <div class="fg"><label>Flight Number</label><input type="text" id="ff-no" placeholder="NAF-001"></div>
             <div class="fg"><label>Aircraft Registration *</label><input type="text" id="ff-reg" placeholder="NAF-501"></div>
             <div class="fg"><label>Aircraft Type *</label><select id="ff-ac"><option value="">Select…</option></select></div>
             <div class="fg"><label>Departure *</label><input type="text" id="ff-dep" placeholder="DNAA"></div>
             <div class="fg"><label>Destination *</label><input type="text" id="ff-dest" placeholder="DNKN"></div>
             <div class="fg"><label>Route</label><input type="text" id="ff-route"></div>
-            <div class="fg"><label>Category *</label><select id="ff-cat"><option>Training</option><option>Operational</option><option>Ferry</option><option>Test Flight</option><option>VIP</option><option>Combat</option><option>Surveillance</option><option>Humanitarian</option></select></div>
+            <div class="fg"><label>Category *</label><select id="ff-cat"><option>Training</option><option>Operational</option></select></div>
           </div>
         </div>
         <div class="fsec"><div class="fsec-t">Timings</div>
@@ -599,14 +647,14 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
       <div class="card mb1">
         <div style="display:flex;gap:.65rem;flex-wrap:wrap;align-items:center">
           <div class="search-wrap"><span class="search-ic">🔍</span><input type="text" id="log-s" placeholder="Search…" oninput="filterLog()"></div>
-          <select class="pill-select" id="log-cat" onchange="filterLog()"><option value="">All Categories</option><option>Training</option><option>Operational</option><option>Ferry</option><option>Test Flight</option><option>VIP</option><option>Combat</option><option>Surveillance</option><option>Humanitarian</option></select>
+          <select class="pill-select" id="log-cat" onchange="filterLog()"><option value="">All Categories</option><option>Training</option><option>Operational</option></select>
           <select class="pill-select" id="log-pos" onchange="filterLog()"><option value="">All Positions</option><option value="captain">Captain</option><option value="copilot">Co-Pilot</option><option value="instructor">Instructor</option><option value="student">Student</option></select>
           <input type="month" class="pill-select" id="log-month" onchange="filterLog()">
         </div>
       </div>
       <div class="card">
         <div class="tw">
-          <table><thead><tr><th style="cursor:pointer" onclick="sortLog('date')">Date ↕</th><th>Flight No</th><th>Aircraft</th><th>Route</th><th>Position</th><th>Block</th><th>Airborne</th><th>Conditions</th><th>Category</th><th></th></tr></thead>
+          <table><thead><tr><th style="cursor:pointer" onclick="sortLog('date')">Date ↕</th><th>Aircraft</th><th>Route</th><th>Position</th><th>Block</th><th>Airborne</th><th>Conditions</th><th>Category</th><th></th></tr></thead>
           <tbody id="log-body"></tbody></table>
         </div>
         <div class="pag" id="log-pag"></div>
@@ -619,7 +667,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
         <div class="st"><span class="ic">✈</span> Aircraft Experience</div>
         <button class="btn btn-outline btn-sm" onclick="exportAcXLS()">📊 Export</button>
       </div>
-      <div class="card"><div class="tw"><table><thead><tr><th>Aircraft Type</th><th>Sorties</th><th>Captain Hrs</th><th>Co-Pilot Hrs</th><th>Instructor Hrs</th><th>Student Hrs</th><th>Total Hrs</th></tr></thead><tbody id="ac-body"></tbody></table></div></div>
+      <div class="card"><div class="tw"><table><thead><tr><th>Aircraft Type</th><th>Sorties</th><th>Captain</th><th>Co-Pilot</th><th>Instructor</th><th>Student</th><th style="color:var(--gold)">CF Hrs</th><th>Total</th></tr></thead><tbody id="ac-body"></tbody></table></div></div>
     </div>
 
     <!-- ───────────────── MEDICAL ───────────────── -->
@@ -1432,24 +1480,43 @@ window.loadDashboard=()=>{
     if(f.aircraftType){if(!acMap[f.aircraftType])acMap[f.aircraftType]={s:0,c:0,cop:0,i:0,st:0};const a=acMap[f.aircraftType];a.s++;a.c+=f.captainHrs||0;a.cop+=f.copilotHrs||0;a.i+=f.instructorHrs||0;a.st+=f.studentHrs||0;}
   });
   const sorties=flights.length;
+
+  // ── Add carry-forward hours to pilot's own totals ──
+  // Only applied when viewing own dashboard (not admin viewing others)
+  const cfSource = (!isAdmin()||!filterUid) ? (CP?.carryForward||{}) : {};
+  let cfTot=0,cfCpt=0,cfCop=0,cfNight=0;
+  Object.entries(cfSource).forEach(([ac,h])=>{
+    cfTot+=parseFloat(h.total)||0;
+    cfCpt+=parseFloat(h.pic)||0;
+    cfCop+=parseFloat(h.cop)||0;
+    cfNight+=parseFloat(h.night)||0;
+    // Merge carry-forward into acMap for charts
+    if(!acMap[ac])acMap[ac]={s:0,c:0,cop:0,i:0,st:0};
+    acMap[ac].c+=parseFloat(h.pic)||0;
+    acMap[ac].cop+=parseFloat(h.cop)||0;
+  });
+  const hasCF=cfTot>0;
+  const cfBadge=hasCF?`<span title="Includes ${cfTot.toFixed(1)} hrs carry-forward" style="font-size:.6rem;background:rgba(212,175,55,.15);color:var(--gold);border:1px solid rgba(212,175,55,.3);border-radius:4px;padding:.1rem .3rem;margin-left:.3rem;vertical-align:middle">+CF</span>`:'';
+
   G('dash-stats').innerHTML=`
-    <div class="sc"><div class="sl">Total Hours</div><div class="sv">${tot.toFixed(1)}</div><div class="su">flight hours</div><div class="si">⏱</div></div>
-    <div class="sc"><div class="sl">Captain (PIC)</div><div class="sv">${cpt.toFixed(1)}</div><div class="su">hrs</div><div class="si">✈</div></div>
-    <div class="sc"><div class="sl">Co-Pilot</div><div class="sv">${cop.toFixed(1)}</div><div class="su">hrs</div><div class="si">👨‍✈️</div></div>
+    <div class="sc"><div class="sl">Total Hours</div><div class="sv">${(tot+cfTot).toFixed(1)}${cfBadge}</div><div class="su">flight hours</div><div class="si">⏱</div></div>
+    <div class="sc"><div class="sl">Captain (PIC)</div><div class="sv">${(cpt+cfCpt).toFixed(1)}${hasCF&&cfCpt>0?cfBadge:''}</div><div class="su">hrs</div><div class="si">✈</div></div>
+    <div class="sc"><div class="sl">Co-Pilot</div><div class="sv">${(cop+cfCop).toFixed(1)}${hasCF&&cfCop>0?cfBadge:''}</div><div class="su">hrs</div><div class="si">👨‍✈️</div></div>
     <div class="sc"><div class="sl">Instructor</div><div class="sv">${ins.toFixed(1)}</div><div class="su">hrs</div><div class="si">🎓</div></div>
     <div class="sc"><div class="sl">Student</div><div class="sv">${stu.toFixed(1)}</div><div class="su">hrs</div><div class="si">📚</div></div>
     <div class="sc"><div class="sl">Day Flying</div><div class="sv">${day.toFixed(1)}</div><div class="su">hrs</div><div class="si">☀️</div></div>
-    <div class="sc"><div class="sl">Night Flying</div><div class="sv">${night.toFixed(1)}</div><div class="su">hrs</div><div class="si">🌙</div></div>
+    <div class="sc"><div class="sl">Night Flying</div><div class="sv">${(night+cfNight).toFixed(1)}${hasCF&&cfNight>0?cfBadge:''}</div><div class="su">hrs</div><div class="si">🌙</div></div>
     <div class="sc"><div class="sl">Instrument</div><div class="sv">${instr.toFixed(1)}</div><div class="su">hrs</div><div class="si">🎛</div></div>
     <div class="sc"><div class="sl">Simulator</div><div class="sv">${sim.toFixed(1)}</div><div class="su">hrs</div><div class="si">🖥</div></div>
     <div class="sc"><div class="sl">Total Sorties</div><div class="sv">${sorties}</div><div class="su">flights</div><div class="si">🛫</div></div>
     <div class="sc"><div class="sl">Aircraft Types</div><div class="sv">${Object.keys(acMap).length}</div><div class="su">types flown</div><div class="si">✈</div></div>
     <div class="sc green"><div class="sl">This Month</div><div class="sv" style="color:var(--green)">${monthHrs.toFixed(1)}</div><div class="su">hrs</div><div class="si">📅</div></div>
+    ${hasCF?`<div class="sc" style="border-color:rgba(212,175,55,.3)"><div class="sl">Carry-Forward</div><div class="sv" style="color:var(--gold)">${cfTot.toFixed(1)}</div><div class="su">prior hrs</div><div class="si">🕐</div></div>`:''}
   `;
   drawCharts(flights,acMap);
   const recent=flights.slice(0,6);
-  G('dash-recent').innerHTML=recent.length?recent.map(f=>`<tr><td>${f.date||'—'}</td><td class="sm">${isAdmin()?(allUsers.find(u=>u.id===f.pilotId)?.fullName||f.pilotName||'—'):'Me'}</td><td><strong>${f.aircraftType||'—'}</strong></td><td class="sm">${f.departure||'?'}→${f.destination||'?'}</td><td>${posLbl(f.position)}</td><td class="mono gold"><strong>${(f.airborneHrs||0).toFixed(1)}</strong></td><td><span class="badge bb">${f.category||'—'}</span></td></tr>`).join(''):'<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:1.5rem">No flight records yet</td></tr>';
-  G('pc-hrs').textContent=myFlights.reduce((a,f)=>a+(f.airborneHrs||0),0).toFixed(1);
+  G('dash-recent').innerHTML=recent.length?recent.map(f=>`<tr><td>${f.date||'—'}</td><td class="sm">${isAdmin()?(allUsers.find(u=>u.id===f.pilotId)?.fullName||f.pilotName||'—'):'Me'}</td><td><strong>${f.aircraftType||'—'}</strong></td><td class="sm">${f.departure||'?'}→${f.destination||'?'}</td><td>${posLbl(f.position)}</td><td class="mono gold"><strong>${(f.airborneHrs||0).toFixed(1)}</strong></td><td><span class="badge bb">${f.category||'—'}</span></td></tr>`).join(''):'<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:1.5rem">No flight records yet — or add your carry-forward hours in My Profile</td></tr>';
+  G('pc-hrs').textContent=(myFlights.reduce((a,f)=>a+(f.airborneHrs||0),0)+cfTot).toFixed(1);
   renderAlerts();
 };
 
@@ -1497,7 +1564,7 @@ window.submitFlight=async()=>{
   const aHrs=+(airborneMins/60).toFixed(1),bHrs=+(blockMins/60).toFixed(1);
   const entry={
     pilotId:CU.uid,pilotName:CP?.fullName||'',pilotSN:CP?.serviceNumber||'',
-    date,flightNumber:V('ff-no'),aircraftReg:V('ff-reg'),aircraftType:ac,
+    date,aircraftReg:V('ff-reg'),aircraftType:ac,
     departure:dep,destination:dest,route:V('ff-route'),category:V('ff-cat'),
     engStart:es,takeoff:to,land:ld,engStop:ep,
     blockMins,airborneMins,blockHrs:bHrs,airborneHrs:aHrs,
@@ -1540,7 +1607,7 @@ window.calcTimes=()=>{
 };
 
 window.clearFlight=()=>{
-  ['ff-date','ff-no','ff-reg','ff-route','ff-es','ff-to','ff-ld','ff-ep','ff-c-cpt','ff-c-cop','ff-c-ins','ff-c-stu','ff-mn','ff-mt','ff-md','ff-rem'].forEach(id=>G(id)&&(G(id).value=''));
+  ['ff-date','ff-reg','ff-route','ff-es','ff-to','ff-ld','ff-ep','ff-c-cpt','ff-c-cop','ff-c-ins','ff-c-stu','ff-mn','ff-mt','ff-md','ff-rem'].forEach(id=>G(id)&&(G(id).value=''));
   G('ff-ac').value='';G('ff-cat').value='Training';G('ff-pos').value='captain';G('ff-oc').value='Successful';
   G('ff-day').checked=true;G('ff-night').checked=false;G('ff-ifr').checked=false;G('ff-sim').checked=false;
   G('d-block').textContent='--:--';G('d-air').textContent='--:--';G('d-hrs').textContent='0.0';
@@ -1567,7 +1634,7 @@ function renderLog(){
   const slice=filteredFlights.slice((logPage-1)*PER,logPage*PER);
   G('log-body').innerHTML=slice.length?slice.map(f=>`
     <tr style="cursor:pointer" onclick="flightDetail('${f.id}')">
-      <td>${f.date||'—'}</td><td class="mono sm">${f.flightNumber||'—'}</td>
+      <td>${f.date||'—'}</td>
       <td><strong>${f.aircraftType||'—'}</strong><br><span class="mut sm">${f.aircraftReg||''}</span></td>
       <td>${f.departure||'?'}→${f.destination||'?'}</td>
       <td>${posLbl(f.position)}</td>
@@ -1583,7 +1650,7 @@ function renderLog(){
 window.flightDetail=async(id)=>{
   const f=myFlights.find(x=>x.id===id);if(!f)return;
   G('flight-detail').innerHTML=`
-    <div class="grid2 mb2"><div><div class="mut sm">Date</div><strong>${f.date}</strong></div><div><div class="mut sm">Flight No</div><strong>${f.flightNumber||'—'}</strong></div><div><div class="mut sm">Aircraft</div><strong>${f.aircraftType} (${f.aircraftReg||'—'})</strong></div><div><div class="mut sm">Route</div><strong>${f.departure}→${f.destination}</strong></div><div><div class="mut sm">Category</div><span class="badge bb">${f.category}</span></div><div><div class="mut sm">Position</div>${posLbl(f.position)}</div></div>
+    <div class="grid2 mb2"><div><div class="mut sm">Date</div><strong>${f.date}</strong></div><div><div class="mut sm">Aircraft</div><strong>${f.aircraftType} (${f.aircraftReg||'—'})</strong></div><div><div class="mut sm">Route</div><strong>${f.departure}→${f.destination}</strong></div><div><div class="mut sm">Category</div><span class="badge bb">${f.category}</span></div><div><div class="mut sm">Position</div>${posLbl(f.position)}</div></div>
     <div class="dv"></div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin:.75rem 0">
       <div class="sc"><div class="sl">Eng Start</div><div class="sv" style="font-size:1rem">${f.engStart||'—'}</div></div>
@@ -1616,9 +1683,34 @@ window.deleteFlight=async(id)=>{
 // ════════════════════════════════════════════
 function renderAc(){
   const acMap={};
-  myFlights.forEach(f=>{if(!f.aircraftType)return;if(!acMap[f.aircraftType])acMap[f.aircraftType]={s:0,c:0,cop:0,i:0,st:0};const a=acMap[f.aircraftType];a.s++;a.c+=f.captainHrs||0;a.cop+=f.copilotHrs||0;a.i+=f.instructorHrs||0;a.st+=f.studentHrs||0;});
-  const body=G('ac-body');const types=Object.entries(acMap);
-  body.innerHTML=types.length?types.map(([t,a])=>`<tr><td><strong>${t}</strong></td><td>${a.s}</td><td class="mono">${a.c.toFixed(1)}</td><td class="mono">${a.cop.toFixed(1)}</td><td class="mono">${a.i.toFixed(1)}</td><td class="mono">${a.st.toFixed(1)}</td><td class="mono gold"><strong>${(a.c+a.cop+a.i+a.st).toFixed(1)}</strong></td></tr>`).join(''):'<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:2rem">No data</td></tr>';
+  myFlights.forEach(f=>{
+    if(!f.aircraftType)return;
+    if(!acMap[f.aircraftType])acMap[f.aircraftType]={s:0,c:0,cop:0,i:0,st:0,cf:0};
+    const a=acMap[f.aircraftType];
+    a.s++;a.c+=f.captainHrs||0;a.cop+=f.copilotHrs||0;a.i+=f.instructorHrs||0;a.st+=f.studentHrs||0;
+  });
+  // Merge carry-forward hours into acMap
+  const cf=CP?.carryForward||{};
+  Object.entries(cf).forEach(([ac,h])=>{
+    if(!acMap[ac])acMap[ac]={s:0,c:0,cop:0,i:0,st:0,cf:0};
+    acMap[ac].cf=parseFloat(h.total)||0;
+    acMap[ac].c+=parseFloat(h.pic)||0;
+    acMap[ac].cop+=parseFloat(h.cop)||0;
+  });
+  const body=G('ac-body');
+  const types=Object.entries(acMap);
+  const hasCF=types.some(([,a])=>(a.cf||0)>0);
+  body.innerHTML=types.length?types.map(([t,a])=>`
+    <tr>
+      <td><strong>${t}</strong></td>
+      <td>${a.s}</td>
+      <td class="mono">${dec2hhmm(a.c)}</td>
+      <td class="mono">${dec2hhmm(a.cop)}</td>
+      <td class="mono">${dec2hhmm(a.i)}</td>
+      <td class="mono">${dec2hhmm(a.st)}</td>
+      <td class="mono" style="color:var(--gold)">${(a.cf||0)>0?dec2hhmm(a.cf):'—'}</td>
+      <td class="mono gold"><strong>${dec2hhmm(a.c+a.cop+a.i+a.st+(a.cf||0))}</strong></td>
+    </tr>`).join(''):'<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:2rem">No data yet — add flights or carry-forward hours in My Profile</td></tr>';
 }
 
 // ════════════════════════════════════════════
@@ -1742,6 +1834,10 @@ function fillProfile(){
   Object.entries(f).forEach(([k,v])=>{if(G('pf-'+k)&&CP[v])G('pf-'+k).value=CP[v];});
   updatePcard();
   if(CP.photoURL){G('pphoto-disp').innerHTML=`<img src="${CP.photoURL}">`;}
+  // Load carry-forward hours when profile opens
+  loadCFData();
+  // Populate the aircraft select with current types from settings
+  populateCFAcSelect();
 }
 function updatePcard(){
   const rank=V('pf-rank')||CP?.rank||'RANK';
@@ -1759,6 +1855,146 @@ window.handlePhoto=async(ev)=>{
   const file=ev.target.files[0];if(!file)return;if(file.size>2097152){toast('File too large (max 2MB)','e');return;}
   try{const sr=ref(storage,`photos/${CU.uid}/profile`);const sn=await uploadBytes(sr,file);const url=await getDownloadURL(sn.ref);await updateDoc(doc(db,'users',CU.uid),{photoURL:url});CP.photoURL=url;G('pphoto-disp').innerHTML=`<img src="${url}">`;updateSidebar();toast('Photo uploaded','s');}catch(e){toast(e.message,'e');}
 };
+// ════════════════════════════════════════════
+// CARRY-FORWARD HOURS
+// ════════════════════════════════════════════
+
+// In-memory carry-forward data: { aircraftType: { total, pic, cop, night } }
+// Values stored as decimal hours internally; displayed/entered as HH:MM
+let cfData = {};
+
+// Convert HH:MM string → decimal hours (e.g. "02:30" → 2.5)
+function hhmm2dec(str){
+  if(!str||!str.includes(':'))return parseFloat(str)||0;
+  const [h,m]=(str+'').split(':');
+  return (parseInt(h)||0)+((parseInt(m)||0)/60);
+}
+// Convert decimal hours → HH:MM string (e.g. 2.5 → "02:30")
+function dec2hhmm(dec){
+  const d=parseFloat(dec)||0;
+  const h=Math.floor(d);
+  const m=Math.round((d-h)*60);
+  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+}
+// Auto-format time input: insert colon after 2 digits
+window.fmtCFTime=(el)=>{
+  let v=el.value.replace(/[^0-9:]/g,'');
+  // Auto-insert colon after 2nd digit if not already there
+  if(v.length===2&&!v.includes(':')&&el._prev&&el._prev.length<2)v=v+':';
+  if(v.length>5)v=v.slice(0,5);
+  el._prev=el.value;
+  el.value=v;
+};
+
+function populateCFAcSelect(){
+  const sel=G('cf-ac-select');
+  if(!sel)return;
+  const current=sel.value;
+  sel.innerHTML='<option value="">— Select Aircraft —</option>';
+  (settings.aircraftTypes||[]).forEach(t=>{
+    // Only show types not already added
+    if(!cfData[t]){
+      const o=document.createElement('option');
+      o.value=t; o.textContent=t;
+      sel.appendChild(o);
+    }
+  });
+  if(current)sel.value=current;
+}
+
+function renderCFRows(){
+  const container=G('cf-rows');
+  if(!container)return;
+  const entries=Object.entries(cfData);
+  if(!entries.length){
+    container.innerHTML=`<div style="font-size:.78rem;color:var(--text3);text-align:center;padding:.75rem 0">No carry-forward hours added yet.</div>`;
+    updateCFTotal();
+    return;
+  }
+  container.innerHTML=entries.map(([ac,h])=>`
+    <div style="display:grid;grid-template-columns:1.5fr repeat(4,1fr) auto;gap:.4rem;align-items:center;background:var(--bg3);border-radius:8px;padding:.5rem .75rem">
+      <div style="font-size:.8rem;font-weight:700;color:var(--gold)">${ac}</div>
+      <div>
+        <div style="font-size:.6rem;color:var(--text3);margin-bottom:.1rem">Total (HH:MM)</div>
+        <input type="text" maxlength="6" value="${dec2hhmm(h.total||0)}" onchange="updateCFField('${ac}','total',hhmm2dec(this.value))" oninput="fmtCFTime(this)" style="width:100%;font-size:.78rem;padding:.25rem .35rem;background:var(--bg2);border:1px solid var(--border);border-radius:5px;color:var(--text1);font-family:monospace">
+      </div>
+      <div>
+        <div style="font-size:.6rem;color:var(--text3);margin-bottom:.1rem">PIC (HH:MM)</div>
+        <input type="text" maxlength="6" value="${dec2hhmm(h.pic||0)}" onchange="updateCFField('${ac}','pic',hhmm2dec(this.value))" oninput="fmtCFTime(this)" style="width:100%;font-size:.78rem;padding:.25rem .35rem;background:var(--bg2);border:1px solid var(--border);border-radius:5px;color:var(--text1);font-family:monospace">
+      </div>
+      <div>
+        <div style="font-size:.6rem;color:var(--text3);margin-bottom:.1rem">Co-Pilot (HH:MM)</div>
+        <input type="text" maxlength="6" value="${dec2hhmm(h.cop||0)}" onchange="updateCFField('${ac}','cop',hhmm2dec(this.value))" oninput="fmtCFTime(this)" style="width:100%;font-size:.78rem;padding:.25rem .35rem;background:var(--bg2);border:1px solid var(--border);border-radius:5px;color:var(--text1);font-family:monospace">
+      </div>
+      <div>
+        <div style="font-size:.6rem;color:var(--text3);margin-bottom:.1rem">Night (HH:MM)</div>
+        <input type="text" maxlength="6" value="${dec2hhmm(h.night||0)}" onchange="updateCFField('${ac}','night',hhmm2dec(this.value))" oninput="fmtCFTime(this)" style="width:100%;font-size:.78rem;padding:.25rem .35rem;background:var(--bg2);border:1px solid var(--border);border-radius:5px;color:var(--text1);font-family:monospace">
+      </div>
+      <button onclick="removeCFRow('${ac}')" style="background:transparent;border:none;color:#ef4444;font-size:1rem;cursor:pointer;padding:.1rem .3rem" title="Remove">✕</button>
+    </div>`).join('');
+  updateCFTotal();
+  populateCFAcSelect();
+}
+
+window.updateCFField=(ac,field,val)=>{
+  if(!cfData[ac])return;
+  cfData[ac][field]=parseFloat(val)||0;
+  updateCFTotal();
+};
+
+function updateCFTotal(){
+  const totalDec=Object.values(cfData).reduce((s,h)=>s+(parseFloat(h.total)||0),0);
+  const el=G('cf-total-display');
+  if(el)el.innerHTML=`Total carry-forward: <strong style="color:var(--gold)">${dec2hhmm(totalDec)}</strong> (${totalDec.toFixed(1)} hrs decimal) across ${Object.keys(cfData).length} aircraft type${Object.keys(cfData).length!==1?'s':''}`;
+}
+
+window.addCFRow=()=>{
+  const ac=G('cf-ac-select')?.value;
+  const total=hhmm2dec(G('cf-hrs')?.value);
+  const pic=hhmm2dec(G('cf-pic')?.value);
+  const cop=hhmm2dec(G('cf-cop')?.value);
+  const night=hhmm2dec(G('cf-night')?.value);
+  if(!ac){toast('Select an aircraft type first','w');return;}
+  if(total<=0){toast('Enter total hours greater than 00:00','w');return;}
+  if(pic+cop>total+0.01){toast('PIC + Co-Pilot hours cannot exceed total hours','w');return;}
+  if(night>total+0.01){toast('Night hours cannot exceed total hours','w');return;}
+  cfData[ac]={total,pic,cop,night};
+  // Clear inputs
+  if(G('cf-ac-select'))G('cf-ac-select').value='';
+  ['cf-hrs','cf-pic','cf-cop','cf-night'].forEach(id=>{if(G(id)){G(id).value='';G(id)._prev='';}});
+  renderCFRows();
+};
+
+window.removeCFRow=(ac)=>{
+  delete cfData[ac];
+  renderCFRows();
+};
+
+window.saveCF=async()=>{
+  if(!CU)return;
+  try{
+    await updateDoc(doc(db,'users',CU.uid),{
+      carryForward:cfData,
+      carryForwardUpdatedAt:serverTimestamp()
+    });
+    Object.assign(CP,{carryForward:cfData});
+    await logAudit('CARRY_FORWARD_UPDATE','Carry-forward hours updated');
+    const total=Object.values(cfData).reduce((s,h)=>s+(parseFloat(h.total)||0),0);
+    showMsg('cf-msg',`✅ Saved! ${total.toFixed(1)} carry-forward hours across ${Object.keys(cfData).length} aircraft type(s).`,'s');
+    toast('Carry-forward hours saved','s');
+    // Refresh dashboard stats so totals update immediately
+    if(typeof renderDash==='function')renderDash();
+  }catch(e){
+    showMsg('cf-msg','Save failed: '+fErr(e),'e');
+  }
+};
+
+function loadCFData(){
+  cfData=CP?.carryForward ? {...CP.carryForward} : {};
+  renderCFRows();
+  populateCFAcSelect();
+}
+
 window.showQR=()=>{
   const wrap=G('qr-wrap');wrap.innerHTML='';
   const txt=`${CP?.rank||''} ${CP?.fullName||''}\nSN: ${CP?.serviceNumber||''}\nUnit: ${CP?.unit||''}\n115 SOG Pilot E-Logbook`;
@@ -1785,7 +2021,7 @@ window.saveSettings=async()=>{
   const data={systemName:V('s-sysname'),org:V('s-org'),unit:V('s-unit'),base:V('s-base'),aircraftTypes:settings.aircraftTypes,notifDays:settings.notifDays,updatedAt:serverTimestamp()};
   try{await setDoc(doc(db,'settings','main'),data);Object.assign(settings,data);await logAudit('SETTINGS_SAVE','System settings updated');G('sb-orgname').textContent=data.org;toast('Settings saved','s');}catch(e){toast(e.message,'e');}
 };
-window.addAcType=()=>{const t=V('s-new-ac').trim();if(!t)return;settings.aircraftTypes.push(t);G('s-new-ac').value='';renderAcTypes();populateAcSelect();toast('Aircraft type added — save settings to persist','i');};
+window.addAcType=()=>{const t=V('s-new-ac').trim();if(!t)return;settings.aircraftTypes.push(t);G('s-new-ac').value='';renderAcTypes();populateAcSelect();populateCFAcSelect();toast('Aircraft type added — save settings to persist','i');};
 function renderAcTypes(){G('ac-types-list')&&(G('ac-types-list').innerHTML=settings.aircraftTypes.map((t,i)=>`<span class="tag" style="cursor:pointer" onclick="removeAc(${i})">${t} ✕</span>`).join(''));}
 window.removeAc=(i)=>{settings.aircraftTypes.splice(i,1);renderAcTypes();populateAcSelect();};
 function renderRankList(){G('rank-list')&&(G('rank-list').innerHTML=['ACM','AVM','AirMsh','Air Cdre','Gp Capt','Wg Cdr','Sqn Ldr','Flt Lt','Flg Off','Plt Off','WO','FS','Sgt','Cpl'].map(r=>`<span class="tag">${r}</span>`).join(''));}
@@ -1847,23 +2083,48 @@ function buildPDF(type,flights,user){
   P.text(`Pilot: ${user?.rank||''} ${user?.fullName||'—'}`,14,y);P.text(`Service No: ${user?.serviceNumber||'—'}`,120,y);y+=6;
   P.text(`Unit: ${user?.unit||'—'}`,14,y);P.text(`Generated: ${dayjs().format('DD MMM YYYY HH:mm')}`,120,y);y+=6;
   P.text(`Report Type: ${type.toUpperCase()} | Period: ${V('rpt-period')||'All Time'}`,14,y);y+=10;
-  // Stats
+  // Stats — include carry-forward for non-fleet reports
   let tot=0,cpt=0,cop=0,ins=0,stu=0,day=0,night=0,instr=0,sim=0;const acMap={};
   flights.forEach(f=>{tot+=f.airborneHrs||0;cpt+=f.captainHrs||0;cop+=f.copilotHrs||0;ins+=f.instructorHrs||0;stu+=f.studentHrs||0;day+=f.dayHrs||0;night+=f.nightHrs||0;instr+=f.instrumentHrs||0;sim+=f.simulatorHrs||0;if(f.aircraftType){if(!acMap[f.aircraftType])acMap[f.aircraftType]={s:0,c:0,cop:0,i:0,st:0};const a=acMap[f.aircraftType];a.s++;a.c+=f.captainHrs||0;a.cop+=f.copilotHrs||0;a.i+=f.instructorHrs||0;a.st+=f.studentHrs||0;}});
+  // Carry-forward: added for personal reports only (not fleet)
+  const cfSrc=type!=='fleet'?(user?.carryForward||CP?.carryForward||{}): {};
+  let cfTot=0,cfCpt=0,cfCop=0,cfNight=0;
+  Object.entries(cfSrc).forEach(([ac,h])=>{
+    cfTot+=parseFloat(h.total)||0; cfCpt+=parseFloat(h.pic)||0;
+    cfCop+=parseFloat(h.cop)||0;  cfNight+=parseFloat(h.night)||0;
+    if(!acMap[ac])acMap[ac]={s:0,c:0,cop:0,i:0,st:0,cf:0};
+    acMap[ac].cf=(parseFloat(h.total)||0);
+    acMap[ac].c+=parseFloat(h.pic)||0;
+    acMap[ac].cop+=parseFloat(h.cop)||0;
+  });
   if(type==='hours'||type==='annual'||type==='logbook'||type==='fleet'){
     P.setFont('helvetica','bold');P.setFontSize(10);P.setFillColor(0,51,102);P.rect(14,y-3,182,8,'F');P.setTextColor(212,175,55);P.text('FLYING HOURS SUMMARY',16,y+3);y+=12;P.setTextColor(0,0,0);P.setFont('helvetica','normal');P.setFontSize(9);
-    const rows=[['Total Flying Hours',tot.toFixed(1),'hrs'],['Captain (PIC)',cpt.toFixed(1),'hrs'],['Co-Pilot',cop.toFixed(1),'hrs'],['Instructor',ins.toFixed(1),'hrs'],['Student Pilot',stu.toFixed(1),'hrs'],['Day Flying',day.toFixed(1),'hrs'],['Night Flying',night.toFixed(1),'hrs'],['Instrument',instr.toFixed(1),'hrs'],['Simulator',sim.toFixed(1),'hrs'],['Total Sorties',flights.length,'sorties'],['Aircraft Types',Object.keys(acMap).length,'types']];
-    rows.forEach(([l,v,u2])=>{P.text(l+':',16,y);P.setFont('helvetica','bold');P.text(v,100,y);P.setFont('helvetica','normal');P.setTextColor(100,100,100);P.text(u2,120,y);P.setTextColor(0,0,0);y+=5.5;});y+=4;
+    const rows=[
+      ['Total Flying Hours',(tot+cfTot).toFixed(1),'hrs'],
+      ['  — Logged in System',tot.toFixed(1),'hrs'],
+      ...(cfTot>0?[['  — Carry-Forward (Prior)',cfTot.toFixed(1),'hrs']]:[]),
+      ['Captain (PIC)',(cpt+cfCpt).toFixed(1),'hrs'],
+      ['Co-Pilot',(cop+cfCop).toFixed(1),'hrs'],
+      ['Instructor',ins.toFixed(1),'hrs'],
+      ['Student Pilot',stu.toFixed(1),'hrs'],
+      ['Day Flying',day.toFixed(1),'hrs'],
+      ['Night Flying',(night+cfNight).toFixed(1),'hrs'],
+      ['Instrument',instr.toFixed(1),'hrs'],
+      ['Simulator',sim.toFixed(1),'hrs'],
+      ['Total Sorties (Logged)',flights.length,'sorties'],
+      ['Aircraft Types',Object.keys(acMap).length,'types']
+    ];
+    rows.forEach(([l,v,u2])=>{P.text(l+':',16,y);P.setFont('helvetica','bold');P.text(String(v),100,y);P.setFont('helvetica','normal');P.setTextColor(100,100,100);P.text(u2,120,y);P.setTextColor(0,0,0);y+=5.5;});y+=4;
   }
   if(type==='aircraft'||type==='logbook'||type==='fleet'){
     P.setFont('helvetica','bold');P.setFillColor(0,51,102);P.rect(14,y-3,182,8,'F');P.setTextColor(212,175,55);P.text('AIRCRAFT EXPERIENCE',16,y+3);y+=12;P.setTextColor(0,0,0);P.setFont('helvetica','normal');P.setFontSize(8);
-    const headers=['Aircraft Type','Sorties','Captain','Co-Pilot','Instructor','Student','Total'];
-    const cw=[42,20,22,22,22,22,22];let x=14;
+    const headers=['Aircraft Type','Sorties','Captain','Co-Pilot','Instructor','Student','CF Hrs','Total'];
+    const cw=[38,18,20,20,20,18,18,18];let x=14;
     headers.forEach((h,i)=>{P.setFont('helvetica','bold');P.text(h,x,y);x+=cw[i];});y+=5;P.setFont('helvetica','normal');
     Object.entries(acMap).forEach(([t,a])=>{
       if(y>270){P.addPage();y=20;}
       x=14;const tot2=a.c+a.cop+a.i+a.st;
-      [t,a.s+'',a.c.toFixed(1),a.cop.toFixed(1),a.i.toFixed(1),a.st.toFixed(1),tot2.toFixed(1)].forEach((v2,i)=>{P.text(String(v2),x,y);x+=cw[i];});y+=5;
+      [t,a.s+'',a.c.toFixed(1),a.cop.toFixed(1),a.i.toFixed(1),a.st.toFixed(1),(a.cf||0).toFixed(1),tot2.toFixed(1)].forEach((v2,i)=>{P.text(String(v2),x,y);x+=cw[i];});y+=5;
     });y+=4;
   }
   if((type==='logbook'||type==='fleet')&&flights.length){
@@ -1886,7 +2147,29 @@ function buildExcel(type,flights,user){
   // Summary sheet
   let tot=0,cpt=0,cop=0,ins=0,stu=0,day=0,night=0,instr=0,sim=0;const acMap={};
   flights.forEach(f=>{tot+=f.airborneHrs||0;cpt+=f.captainHrs||0;cop+=f.copilotHrs||0;ins+=f.instructorHrs||0;stu+=f.studentHrs||0;day+=f.dayHrs||0;night+=f.nightHrs||0;instr+=f.instrumentHrs||0;sim+=f.simulatorHrs||0;if(f.aircraftType){if(!acMap[f.aircraftType])acMap[f.aircraftType]={s:0,c:0,cop:0,i:0,st:0};const a=acMap[f.aircraftType];a.s++;a.c+=f.captainHrs||0;a.cop+=f.copilotHrs||0;a.i+=f.instructorHrs||0;a.st+=f.studentHrs||0;}});
-  const sum=[['NAF PILOT E-FLIGHT LOG BOOK SYSTEM',''],[settings.org,''],[`Pilot: ${user?.rank||''} ${user?.fullName||''}`,`SN: ${user?.serviceNumber||''}`],[`Unit: ${user?.unit||''}`,`Generated: ${dayjs().format('DD MMM YYYY')}`],['Report:',type.toUpperCase()],['',''],[`FLYING HOURS SUMMARY`,''],[`Total Hours`,tot.toFixed(1)],[`Captain (PIC)`,cpt.toFixed(1)],[`Co-Pilot`,cop.toFixed(1)],[`Instructor`,ins.toFixed(1)],[`Student Pilot`,stu.toFixed(1)],[`Day Flying`,day.toFixed(1)],[`Night Flying`,night.toFixed(1)],[`Instrument`,instr.toFixed(1)],[`Simulator`,sim.toFixed(1)],[`Total Sorties`,flights.length],[`Aircraft Types`,Object.keys(acMap).length]];
+  // Carry-forward for Excel (personal reports only)
+  const cfSrcXL=type!=='fleet'?(user?.carryForward||CP?.carryForward||{}):{};
+  let cfTotXL=0,cfCptXL=0,cfCopXL=0,cfNightXL=0;
+  Object.entries(cfSrcXL).forEach(([ac,h])=>{cfTotXL+=parseFloat(h.total)||0;cfCptXL+=parseFloat(h.pic)||0;cfCopXL+=parseFloat(h.cop)||0;cfNightXL+=parseFloat(h.night)||0;});
+  const sum=[
+    ['115 SOG PILOT E-FLIGHT LOG BOOK SYSTEM',''],[settings.org||'NIGERIAN AIR FORCE',''],
+    [`Pilot: ${user?.rank||''} ${user?.fullName||''}`,`SN: ${user?.serviceNumber||''}`],
+    [`Unit: ${user?.unit||''}`,`Generated: ${dayjs().format('DD MMM YYYY')}`],
+    ['Report:',type.toUpperCase()],['',''],
+    ['FLYING HOURS SUMMARY',''],
+    ['Total Hours (All)',(tot+cfTotXL).toFixed(1)],
+    ['  Logged in System',tot.toFixed(1)],
+    ...(cfTotXL>0?[['  Carry-Forward (Prior Hours)',cfTotXL.toFixed(1)]]:[]),
+    ['Captain (PIC) Total',(cpt+cfCptXL).toFixed(1)],
+    ['Co-Pilot Total',(cop+cfCopXL).toFixed(1)],
+    ['Instructor',ins.toFixed(1)],['Student Pilot',stu.toFixed(1)],
+    ['Day Flying',day.toFixed(1)],['Night Flying Total',(night+cfNightXL).toFixed(1)],
+    ['Instrument',instr.toFixed(1)],['Simulator',sim.toFixed(1)],
+    ['Total Sorties (Logged)',flights.length],['Aircraft Types',Object.keys(acMap).length],
+    ...(cfTotXL>0?[['',''],['CARRY-FORWARD HOURS BY AIRCRAFT',''],
+      ['Aircraft Type','Total Hrs','PIC Hrs','Co-Pilot Hrs','Night Hrs'],
+      ...Object.entries(cfSrcXL).map(([ac,h])=>[ac,parseFloat(h.total||0).toFixed(1),parseFloat(h.pic||0).toFixed(1),parseFloat(h.cop||0).toFixed(1),parseFloat(h.night||0).toFixed(1)])]:[])
+  ];
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(sum),'Summary');
   // Flights sheet
   const rows=flights.map(f=>({Date:f.date,Flight_No:f.flightNumber,Pilot:f.pilotName||'',SN:f.pilotSN||'',Aircraft:f.aircraftType,Reg:f.aircraftReg,From:f.departure,To:f.destination,Route:f.route,Category:f.category,Position:f.position,Block_Hrs:f.blockHrs,Airborne_Hrs:f.airborneHrs,Captain_Hrs:f.captainHrs,CoPilot_Hrs:f.copilotHrs,Instructor_Hrs:f.instructorHrs,Student_Hrs:f.studentHrs,Day:f.isDay?'Y':'',Night:f.isNight?'Y':'',Instrument:f.isInstrument?'Y':'',Simulator:f.isSimulator?'Y':'',Mission_No:f.missionNumber,Outcome:f.missionOutcome,Remarks:f.remarks}));
