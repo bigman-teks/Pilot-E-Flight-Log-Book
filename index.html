@@ -308,7 +308,16 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
       <div class="frow">
         <div class="fg"><label>Service Number *</label><input type="text" id="r-sn" placeholder="NAF/12345"></div>
         <div class="fg"><label>Rank *</label>
-          <select id="r-rank"><option>ACM</option><option>AVM</option><option>AirMsh</option><option>Air Cdre</option><option>Gp Capt</option><option>Wg Cdr</option><option>Sqn Ldr</option><option>Flt Lt</option><option>Flg Off</option><option>Plt Off</option><option selected>WO</option><option>FS</option><option>Sgt</option><option>Cpl</option></select>
+          <select id="r-rank">
+            <option>AirMsh</option>
+            <option>AVM</option>
+            <option>Air Cdre</option>
+            <option>Gp Capt</option>
+            <option>Wg Cdr</option>
+            <option>Sqn Ldr</option>
+            <option>Flt Lt</option>
+            <option>Fg Offr</option>
+          </select>
         </div>
       </div>
       <div class="frow">
@@ -486,7 +495,17 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
           <div class="fsec"><div class="fsec-t">Personal Information</div>
             <div class="fg"><label>Service Number</label><input type="text" id="pf-sn" placeholder="NAF/12345"></div>
             <div class="frow">
-              <div class="fg"><label>Rank</label><select id="pf-rank"><option>ACM</option><option>AVM</option><option>AirMsh</option><option>Air Cdre</option><option>Gp Capt</option><option>Wg Cdr</option><option>Sqn Ldr</option><option>Flt Lt</option><option>Flg Off</option><option>Plt Off</option><option>WO</option><option>FS</option><option>Sgt</option><option>Cpl</option></select></div>
+              <div class="fg"><label>Rank</label>
+                <select id="pf-rank">
+                    <option>AirMsh</option>
+                    <option>AVM</option>
+                    <option>Air Cdre</option>
+                    <option>Gp Capt</option>
+                    <option>Wg Cdr</option>
+                    <option>Sqn Ldr</option>
+                    <option>Flt Lt</option>
+                    <option>Fg Offr</option>
+                </select></div>
               <div class="fg"><label>Gender</label><select id="pf-gender"><option>Male</option><option>Female</option></select></div>
             </div>
             <div class="frow">
@@ -1266,11 +1285,21 @@ window.renderPilotsList=()=>{
   if(!slice.length){body.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--text3);padding:2rem">No pilots found</td></tr>';G('pilots-pag').innerHTML='';return;}
   body.innerHTML=slice.map(u=>{
     const pFlights=allUsersFlights.filter(f=>f.pilotId===u.id);
-    const totHrs=pFlights.reduce((a,f)=>a+(f.airborneHrs||0),0);
-    const cptHrs=pFlights.reduce((a,f)=>a+(f.captainHrs||0),0);
+    // Include carry-forward hours in totals
+    const cfHrs=Object.values(u.carryForward||{}).reduce((s,h)=>s+(parseFloat(h.total)||0),0);
+    const cfCpt=Object.values(u.carryForward||{}).reduce((s,h)=>s+(parseFloat(h.pic)||0),0);
+    const totHrs=pFlights.reduce((a,f)=>a+(f.airborneHrs||0),0)+cfHrs;
+    const cptHrs=pFlights.reduce((a,f)=>a+(f.captainHrs||0),0)+cfCpt;
     const med=getLatestMedForUser(u.id);
     const mDays=med?daysToExpiry(med.expiryDate):null;
-    const mBadge=mDays===null?`<span class="badge">No Record</span>`:mDays<0?`<span class="badge br">EXPIRED</span>`:mDays<90?`<span class="badge ba">${mDays}d</span>`:`<span class="badge bg">VALID</span>`;
+    // Medical badge: show expiry date + status clearly
+    const mBadge=mDays===null
+      ?`<span class="badge" style="font-size:.65rem">No Record</span>`
+      :mDays<0
+        ?`<span class="badge br" title="Expired: ${med.expiryDate}">EXPIRED<br><span style="font-size:.6rem">${med.expiryDate||''}</span></span>`
+        :mDays<90
+          ?`<span class="badge ba" title="Expires: ${med.expiryDate}">${mDays}d left<br><span style="font-size:.6rem">${med.expiryDate||''}</span></span>`
+          :`<span class="badge bg" title="Expires: ${med.expiryDate}">VALID<br><span style="font-size:.6rem">${med.expiryDate||''}</span></span>`;
     const ini=initials(u.fullName||u.email||'?');
     return`<tr>
       <td><div style="display:flex;align-items:center;gap:.5rem">
@@ -1280,14 +1309,15 @@ window.renderPilotsList=()=>{
       <td class="mono sm">${u.serviceNumber||'—'}</td>
       <td class="sm">${u.unit||'—'}${u.squadron?'<br><span class="mut">'+u.squadron+'</span>':''}</td>
       <td><span class="badge ${u.role==='super_admin'?'bgold':u.role==='sqn_admin'?'bb':'bpurple'}">${roleLbl(u.role)}</span></td>
-      <td class="mono gold"><strong>${totHrs.toFixed(1)}</strong></td>
-      <td class="mono">${cptHrs.toFixed(1)}</td>
+      <td class="mono gold"><strong>${dec2hhmm(totHrs)}</strong>${cfHrs>0?'<br><span style="font-size:.6rem;color:var(--gold)">+CF</span>':''}</td>
+      <td class="mono">${dec2hhmm(cptHrs)}</td>
       <td>${pFlights.length}</td>
-      <td>${mBadge}</td>
+      <td style="line-height:1.4">${mBadge}</td>
       <td><span class="badge ${u.status==='active'?'bg':'br'}">${u.status||'active'}</span></td>
       <td>
         <div style="display:flex;gap:.3rem;flex-wrap:wrap">
           <button class="btn btn-outline btn-xs" onclick="viewPilotDetail('${u.id}')">👁 View</button>
+          <button class="btn btn-outline btn-xs" onclick="changeRole('${u.id}','${u.role||'pilot'}')">✎ Role</button>
           <button class="btn btn-xs ${u.status==='active'?'btn-red':'btn-green'}" onclick="toggleStatus('${u.id}','${u.status||'active'}')">
             ${u.status==='active'?'Suspend':'Activate'}
           </button>
