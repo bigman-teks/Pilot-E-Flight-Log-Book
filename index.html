@@ -308,17 +308,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
       <div class="frow">
         <div class="fg"><label>Service Number *</label><input type="text" id="r-sn" placeholder="NAF/12345"></div>
         <div class="fg"><label>Rank *</label>
-          <select id="r-rank"><option>ACM</option>
-            <option>AirMsh</option>
-            <option>AVM</option>
-            <option>Air Cdre</option>
-            <option>Gp Capt</option>
-            <option>Wg Cdr</option>
-            <option>Sqn Ldr</option>
-            <option>Flt Lt</option>
-            <option>Flg Off</option>
-            <option>Plt Off</option>
-          </select>
+          <select id="r-rank"><option>ACM</option><option>AVM</option><option>AirMsh</option><option>Air Cdre</option><option>Gp Capt</option><option>Wg Cdr</option><option>Sqn Ldr</option><option>Flt Lt</option><option>Flg Off</option><option>Plt Off</option><option selected>WO</option><option>FS</option><option>Sgt</option><option>Cpl</option></select>
         </div>
       </div>
       <div class="frow">
@@ -496,19 +486,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
           <div class="fsec"><div class="fsec-t">Personal Information</div>
             <div class="fg"><label>Service Number</label><input type="text" id="pf-sn" placeholder="NAF/12345"></div>
             <div class="frow">
-              <div class="fg"><label>Rank</label>
-                <select id="pf-rank">
-                <option>AirMsh</option>
-                <option>AVM</option>
-                <option>Air Cdre</option>
-                <option>Gp Capt</option>
-                <option>Wg Cdr</option>
-                <option>Sqn Ldr</option>
-                <option>Flt Lt</option>
-                <option>Flg Off</option>
-                <option>Plt Off</option>
-              </select>
-            </div>
+              <div class="fg"><label>Rank</label><select id="pf-rank"><option>ACM</option><option>AVM</option><option>AirMsh</option><option>Air Cdre</option><option>Gp Capt</option><option>Wg Cdr</option><option>Sqn Ldr</option><option>Flt Lt</option><option>Flg Off</option><option>Plt Off</option><option>WO</option><option>FS</option><option>Sgt</option><option>Cpl</option></select></div>
               <div class="fg"><label>Gender</label><select id="pf-gender"><option>Male</option><option>Female</option></select></div>
             </div>
             <div class="frow">
@@ -788,6 +766,48 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
           <button class="btn btn-gold btn-sm" onclick="openCreateUser()">+ Create User</button>
         </div>
         <div class="tw"><table><thead><tr><th>Name</th><th>Service No</th><th>Email</th><th>Role</th><th>Unit</th><th>Status</th><th>Actions</th></tr></thead><tbody id="users-body"></tbody></table></div>
+      </div>
+
+      <!-- Google Sheets Backup Card -->
+      <div class="card mb2" id="gsheets-card">
+        <div class="card-t mb2">📊 Google Sheets Backup</div>
+        <div style="font-size:.78rem;color:var(--text2);margin-bottom:.85rem;line-height:1.6;background:var(--bg3);border-radius:8px;padding:.65rem .85rem;border-left:3px solid #0F9D58">
+          When configured, every new flight entry, profile update, and carry-forward save will automatically append a row to your Google Sheet as a live backup. Uses a Google Apps Script Web App as the bridge.
+        </div>
+        <div class="fg">
+          <label>Google Apps Script Web App URL</label>
+          <input type="text" id="gs-url" placeholder="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec" style="font-size:.75rem;font-family:monospace">
+          <div style="font-size:.7rem;color:var(--text3);margin-top:.3rem">Paste the deployment URL from your Google Apps Script. See setup guide below.</div>
+        </div>
+        <div class="fg">
+          <label>Spreadsheet ID (optional — for verification)</label>
+          <input type="text" id="gs-sheet-id" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms" style="font-size:.75rem;font-family:monospace">
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">
+          <button class="btn btn-gold btn-sm" onclick="saveGSConfig()">💾 Save Config</button>
+          <button class="btn btn-outline btn-sm" onclick="testGSConnection()">🔗 Test Connection</button>
+          <button class="btn btn-outline btn-sm" onclick="syncAllToSheets()">☁ Sync All Data Now</button>
+        </div>
+        <div id="gs-msg" style="margin-top:.5rem"></div>
+
+        <div class="dv mt1"></div>
+        <div class="card-t mb1" style="font-size:.78rem">📋 Setup Guide</div>
+        <div style="font-size:.74rem;color:var(--text2);line-height:1.8;background:var(--bg3);border-radius:8px;padding:.75rem .9rem">
+          <strong style="color:var(--gold)">Step 1.</strong> Open <a href="https://sheets.google.com" target="_blank" style="color:#4FC3F7">Google Sheets</a> → Create a new sheet → Name it <em>"115 SOG Logbook Backup"</em><br>
+          <strong style="color:var(--gold)">Step 2.</strong> In the sheet, go to <strong>Extensions → Apps Script</strong><br>
+          <strong style="color:var(--gold)">Step 3.</strong> Delete the default code and paste the Apps Script code below<br>
+          <strong style="color:var(--gold)">Step 4.</strong> Click <strong>Deploy → New Deployment → Web App</strong><br>
+          &nbsp;&nbsp;&nbsp;• Execute as: <em>Me</em> &nbsp;|&nbsp; Who has access: <em>Anyone</em><br>
+          <strong style="color:var(--gold)">Step 5.</strong> Copy the Web App URL and paste it above → Save Config<br>
+          <strong style="color:var(--gold)">Step 6.</strong> Click <em>Test Connection</em> to verify, then <em>Sync All Data Now</em> to populate existing records
+        </div>
+
+        <div class="dv mt1"></div>
+        <div class="card-t mb1" style="font-size:.78rem">📝 Apps Script Code (copy this into your script editor)</div>
+        <div style="position:relative">
+          <pre id="gs-script-code" style="background:#0d1117;color:#e6edf3;border-radius:8px;padding:.85rem 1rem;font-size:.68rem;overflow-x:auto;line-height:1.6;border:1px solid var(--border);max-height:280px;overflow-y:auto">${getAppsScriptCode()}</pre>
+          <button onclick="copyGSCode()" style="position:absolute;top:.5rem;right:.5rem;background:rgba(30,58,95,.9);color:var(--gold);border:1px solid var(--border);border-radius:6px;padding:.25rem .6rem;font-size:.7rem;cursor:pointer">Copy</button>
+        </div>
       </div>
 
       <!-- PWA Install Card -->
@@ -1613,6 +1633,7 @@ window.submitFlight=async()=>{
   try{
     await addDoc(collection(db,'flightLogs'),entry);
     await logAudit('FLIGHT_ENTRY',ac+' '+date+' '+aHrs+'hrs');
+    sheetsLogFlight({...flightData,id:ref?.id},CP?.fullName);
     toast('Flight entry saved','s');clearFlight();
     await loadMyFlights();if(isAdmin())await loadAllFlights();
     goPanel('logbook');
@@ -1882,12 +1903,202 @@ function updatePcard(){
 }
 window.saveProfile=async()=>{
   const data={serviceNumber:V('pf-sn'),rank:V('pf-rank'),firstName:V('pf-fn'),lastName:V('pf-ln'),fullName:(V('pf-fn')+' '+V('pf-ln')).trim(),dob:V('pf-dob'),gender:V('pf-gender'),unit:V('pf-unit'),squadron:V('pf-sqn'),phone:V('pf-phone'),email:V('pf-email'),licenseNumber:V('pf-lic'),licenseIssue:V('pf-lic-iss'),licenseExpiry:V('pf-lic-exp'),irExpiry:V('pf-ir-exp'),updatedAt:serverTimestamp()};
-  try{await updateDoc(doc(db,'users',CU.uid),data);Object.assign(CP,data);updateSidebar();updatePcard();await logAudit('PROFILE_UPDATE','Profile updated');toast('Profile saved','s');}catch(e){toast(e.message,'e');}
+  try{await updateDoc(doc(db,'users',CU.uid),data);Object.assign(CP,data);updateSidebar();updatePcard();await logAudit('PROFILE_UPDATE','Profile updated');sheetsLogProfile({...data,uid:CU.uid});toast('Profile saved','s');}catch(e){toast(e.message,'e');}
 };
 window.handlePhoto=async(ev)=>{
   const file=ev.target.files[0];if(!file)return;if(file.size>2097152){toast('File too large (max 2MB)','e');return;}
   try{const sr=ref(storage,`photos/${CU.uid}/profile`);const sn=await uploadBytes(sr,file);const url=await getDownloadURL(sn.ref);await updateDoc(doc(db,'users',CU.uid),{photoURL:url});CP.photoURL=url;G('pphoto-disp').innerHTML=`<img src="${url}">`;updateSidebar();toast('Photo uploaded','s');}catch(e){toast(e.message,'e');}
 };
+// ════════════════════════════════════════════
+// GOOGLE SHEETS BACKUP
+// ════════════════════════════════════════════
+
+let gsConfig = { url: '', sheetId: '' };
+
+function loadGSConfig(){
+  // Load from Firestore settings if available, else localStorage fallback
+  const local = localStorage.getItem('naf_gs_config');
+  if(local){ try{ Object.assign(gsConfig, JSON.parse(local)); }catch(e){} }
+  if(settings.gsUrl){ gsConfig.url = settings.gsUrl; }
+  if(settings.gsSheetId){ gsConfig.sheetId = settings.gsSheetId; }
+  if(G('gs-url')) G('gs-url').value = gsConfig.url || '';
+  if(G('gs-sheet-id')) G('gs-sheet-id').value = gsConfig.sheetId || '';
+}
+
+window.saveGSConfig = async () => {
+  const url = V('gs-url').trim();
+  const sheetId = V('gs-sheet-id').trim();
+  if(!url){ showMsg('gs-msg','Enter the Apps Script Web App URL first','d'); return; }
+  if(!url.startsWith('https://script.google.com')){
+    showMsg('gs-msg','URL must start with https://script.google.com','d'); return;
+  }
+  gsConfig = { url, sheetId };
+  localStorage.setItem('naf_gs_config', JSON.stringify(gsConfig));
+  // Also save to Firestore settings so all admin sessions share it
+  try{
+    await updateDoc(doc(db,'settings','main'),{ gsUrl: url, gsSheetId: sheetId });
+    settings.gsUrl = url; settings.gsSheetId = sheetId;
+  }catch(e){ console.warn('Could not save GS config to Firestore:', e); }
+  showMsg('gs-msg','✅ Config saved! Click "Test Connection" to verify.','s');
+};
+
+window.testGSConnection = async () => {
+  if(!gsConfig.url){ showMsg('gs-msg','Save a URL first','d'); return; }
+  showMsg('gs-msg','🔄 Testing connection…','i');
+  try{
+    const r = await fetch(gsConfig.url + '?action=ping', { method:'GET', mode:'no-cors' });
+    // no-cors means we can't read the response body, but no error = script is reachable
+    showMsg('gs-msg','✅ Connection successful! Script is reachable. Try "Sync All Data Now" to populate the sheet.','s');
+  }catch(e){
+    showMsg('gs-msg','❌ Connection failed: ' + e.message + '. Check the URL and ensure the script is deployed as "Anyone" access.','d');
+  }
+};
+
+// Core function: send a row to Google Sheets
+async function sendToSheets(sheetName, rowData){
+  if(!gsConfig.url) return; // silently skip if not configured
+  try{
+    const payload = { sheet: sheetName, row: rowData, timestamp: new Date().toISOString() };
+    // Use no-cors fetch (Google Apps Script doesn't set CORS headers on POST by default)
+    // The script must use ContentService.createTextOutput with CORS headers
+    await fetch(gsConfig.url, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    console.log('[Sheets] Row sent to:', sheetName);
+  }catch(e){
+    console.warn('[Sheets] Failed to send row:', e);
+    // Never block the main app flow — sheets backup is best-effort
+  }
+}
+
+// Send a flight entry row
+function sheetsLogFlight(f, pilotName){
+  sendToSheets('FlightLog', [
+    f.id || '', new Date().toISOString(), pilotName || CP?.fullName || '',
+    CP?.serviceNumber || '', CP?.rank || '', CP?.squadron || '',
+    f.date || '', f.aircraftType || '', f.aircraftReg || '',
+    f.departure || '', f.destination || '', f.position || '',
+    f.engineStart || '', f.takeoff || '', f.landing || '', f.engineStop || '',
+    (f.blockMins/60||0).toFixed(2), (f.airborneMins/60||0).toFixed(2),
+    f.airborneHrs || 0, f.captainHrs || 0, f.copilotHrs || 0,
+    f.instructorHrs || 0, f.studentHrs || 0,
+    f.dayHrs || 0, f.nightHrs || 0, f.instrumentHrs || 0, f.simulatorHrs || 0,
+    f.category || '', f.remarks || '', f.missionTitle || ''
+  ]);
+}
+
+// Send a pilot profile row
+function sheetsLogProfile(p){
+  sendToSheets('Pilots', [
+    p.uid || p.id || '', new Date().toISOString(),
+    p.serviceNumber || '', p.rank || '', p.fullName || '',
+    p.email || '', p.role || '', p.unit || '', p.squadron || '',
+    p.status || 'active', p.licenseNumber || '', p.licenseExpiry || '', p.irExpiry || ''
+  ]);
+}
+
+// Send carry-forward rows (one per aircraft type)
+function sheetsLogCarryForward(uid, fullName, cfData){
+  Object.entries(cfData||{}).forEach(([ac, h]) => {
+    sendToSheets('CarryForward', [
+      uid, new Date().toISOString(), fullName || '',
+      ac, h.total||0, h.pic||0, h.cop||0, h.night||0
+    ]);
+  });
+}
+
+// Sync ALL existing data to sheets (admin one-time or periodic)
+window.syncAllToSheets = async () => {
+  if(!gsConfig.url){ showMsg('gs-msg','Configure and save the URL first','d'); return; }
+  if(!confirm('This will push all flight records, pilot profiles, and carry-forward hours to your Google Sheet. Continue?')) return;
+  showMsg('gs-msg','⏳ Syncing… this may take a moment.','i');
+  let count = 0;
+  try{
+    // Sync all flights
+    for(const f of allUsersFlights){
+      const pilot = allUsers.find(u=>u.id===f.pilotId);
+      await sheetsLogFlight(f, pilot?.fullName);
+      count++;
+      if(count%10===0) showMsg('gs-msg',`⏳ Synced ${count} records so far…`,'i');
+      await new Promise(r=>setTimeout(r,120)); // throttle to avoid rate limits
+    }
+    // Sync all pilot profiles
+    for(const u of allUsers){
+      await sheetsLogProfile(u);
+      if(u.carryForward) await sheetsLogCarryForward(u.id, u.fullName, u.carryForward);
+      await new Promise(r=>setTimeout(r,80));
+    }
+    showMsg('gs-msg',`✅ Sync complete! Pushed ${count} flight records + ${allUsers.length} pilot profiles to Google Sheets.`,'s');
+  }catch(e){
+    showMsg('gs-msg','⚠️ Sync partially completed: ' + e.message,'w');
+  }
+};
+
+function getAppsScriptCode(){
+  return `// 115 SOG Pilot E-Logbook — Google Sheets Backup Script
+// Paste this into Extensions → Apps Script, then Deploy as Web App
+// Execute as: Me | Access: Anyone
+
+const SHEETS = {
+  FlightLog:    ['ID','Synced At','Pilot Name','Service No','Rank','Squadron','Date',
+                 'Aircraft Type','Reg','From','To','Position','Eng Start','Takeoff',
+                 'Landing','Eng Stop','Block Hrs','Airborne Hrs','Total Hrs','Captain',
+                 'Co-Pilot','Instructor','Student','Day','Night','Instrument','Sim',
+                 'Category','Remarks','Mission'],
+  Pilots:       ['UID','Synced At','Service No','Rank','Full Name','Email','Role',
+                 'Unit','Squadron','Status','License No','License Expiry','IR Expiry'],
+  CarryForward: ['UID','Synced At','Pilot Name','Aircraft Type',
+                 'Total Hrs','PIC Hrs','Co-Pilot Hrs','Night Hrs'],
+};
+
+function doPost(e){
+  try{
+    const data = JSON.parse(e.postData.contents);
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheetName = data.sheet;
+    const row = data.row;
+    if(!sheetName || !row) return respond({error:'Missing sheet or row'});
+    let sheet = ss.getSheetByName(sheetName);
+    if(!sheet){
+      sheet = ss.insertSheet(sheetName);
+      if(SHEETS[sheetName]) sheet.appendRow(SHEETS[sheetName]);
+    }
+    sheet.appendRow(row);
+    return respond({status:'ok', sheet: sheetName});
+  }catch(err){
+    return respond({error: err.toString()});
+  }
+}
+
+function doGet(e){
+  const action = e.parameter.action;
+  if(action === 'ping') return respond({status:'pong', time: new Date().toISOString()});
+  return respond({status:'ready'});
+}
+
+function respond(obj){
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}`;
+}
+
+window.copyGSCode = () => {
+  const code = getAppsScriptCode();
+  navigator.clipboard.writeText(code).then(()=>{
+    toast('Apps Script code copied to clipboard!','s');
+  }).catch(()=>{
+    // Fallback for mobile/PWA
+    const ta=document.createElement('textarea');
+    ta.value=code;document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');document.body.removeChild(ta);
+    toast('Code copied!','s');
+  });
+};
+
 // ════════════════════════════════════════════
 // CARRY-FORWARD HOURS
 // ════════════════════════════════════════════
@@ -2014,6 +2225,7 @@ window.saveCF=async()=>{
     await logAudit('CARRY_FORWARD_UPDATE','Carry-forward hours updated');
     const total=Object.values(cfData).reduce((s,h)=>s+(parseFloat(h.total)||0),0);
     showMsg('cf-msg',`✅ Saved! ${total.toFixed(1)} carry-forward hours across ${Object.keys(cfData).length} aircraft type(s).`,'s');
+    sheetsLogCarryForward(CU.uid, CP?.fullName, cfData);
     toast('Carry-forward hours saved','s');
     // Refresh dashboard stats so totals update immediately
     if(typeof renderDash==='function')renderDash();
@@ -2464,6 +2676,7 @@ window.goPanel=(id)=>{
     setTimeout(()=>{
       const el=G('pwa-status-display');
       if(el){showPWAStatus();}
+      loadGSConfig();
     },100);
   }
 };
