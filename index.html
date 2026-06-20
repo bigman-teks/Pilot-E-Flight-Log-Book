@@ -308,7 +308,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
       <div class="frow">
         <div class="fg"><label>Service Number *</label><input type="text" id="r-sn" placeholder="NAF/12345"></div>
         <div class="fg"><label>Rank *</label>
-          <select id="r-rank"><option>ACM</option><option>AVM</option><option>AirMsh</option><option>Air Cdre</option><option>Gp Capt</option><option>Wg Cdr</option><option>Sqn Ldr</option><option>Flt Lt</option><option>Flg Off</option><option>Plt Off</option><option selected>WO</option><option>FS</option><option>Sgt</option><option>Cpl</option></select>
+          <select id="r-rank"><option selected>Fg Offr</option><option>Flt Lt</option><option>Sqn Ldr</option><option>Wg Cdr</option><option>Gp Capt</option><option>Air Cdre</option><option>AVM</option><option>Air Mshl</option><option>ACM</option></select>
         </div>
       </div>
       <div class="frow">
@@ -486,7 +486,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
           <div class="fsec"><div class="fsec-t">Personal Information</div>
             <div class="fg"><label>Service Number</label><input type="text" id="pf-sn" placeholder="NAF/12345"></div>
             <div class="frow">
-              <div class="fg"><label>Rank</label><select id="pf-rank"><option>ACM</option><option>AVM</option><option>AirMsh</option><option>Air Cdre</option><option>Gp Capt</option><option>Wg Cdr</option><option>Sqn Ldr</option><option>Flt Lt</option><option>Flg Off</option><option>Plt Off</option><option>WO</option><option>FS</option><option>Sgt</option><option>Cpl</option></select></div>
+              <div class="fg"><label>Rank</label><select id="pf-rank"><option>Fg Offr</option><option>Flt Lt</option><option>Sqn Ldr</option><option>Wg Cdr</option><option>Gp Capt</option><option>Air Cdre</option><option>AVM</option><option>Air Mshl</option><option>ACM</option></select></div>
               <div class="fg"><label>Gender</label><select id="pf-gender"><option>Male</option><option>Female</option></select></div>
             </div>
             <div class="frow">
@@ -514,6 +514,21 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
             <div class="fg"><label>Instrument Rating Expiry</label><input type="date" id="pf-ir-exp"></div>
           </div>
         </div>
+      </div>
+
+      <!-- ── CHANGE PASSWORD ──────────────────────────────────────── -->
+      <div class="card mt2">
+        <div class="card-t mb1">🔒 Change Password</div>
+        <div style="font-size:.78rem;color:var(--text2);margin-bottom:1rem;line-height:1.6;background:var(--bg3);border-radius:8px;padding:.65rem .85rem;border-left:3px solid var(--gold)">
+          For security, you'll need to re-enter your current password to set a new one.
+        </div>
+        <div class="frow">
+          <div class="fg"><label>Current Password</label><input type="password" id="cp-current" placeholder="Enter current password"></div>
+          <div class="fg"><label>New Password</label><input type="password" id="cp-new" placeholder="Min 6 characters"></div>
+        </div>
+        <div class="fg"><label>Confirm New Password</label><input type="password" id="cp-confirm" placeholder="Re-enter new password"></div>
+        <button class="btn btn-gold btn-sm" onclick="changePassword()">🔒 Update Password</button>
+        <div id="cp-msg" style="margin-top:.5rem"></div>
       </div>
 
       <!-- ── CARRY-FORWARD HOURS ─────────────────────────────────── -->
@@ -611,21 +626,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
             </div>
           </div>
         </div>
-        <div class="fsec"><div class="fsec-t">Crew</div>
-          <div class="fgrid">
-            <div class="fg"><label>Captain</label><input type="text" id="ff-c-cpt" placeholder="Rank + Name"></div>
-            <div class="fg"><label>Co-Pilot</label><input type="text" id="ff-c-cop" placeholder="Rank + Name"></div>
-            <div class="fg"><label>Instructor</label><input type="text" id="ff-c-ins" placeholder="Rank + Name"></div>
-            <div class="fg"><label>Student</label><input type="text" id="ff-c-stu" placeholder="Rank + Name"></div>
-          </div>
-        </div>
-        <div class="fsec"><div class="fsec-t">Mission</div>
-          <div class="fgrid">
-            <div class="fg"><label>Mission No</label><input type="text" id="ff-mn" placeholder="MSN-001/2025"></div>
-            <div class="fg"><label>Mission Title</label><input type="text" id="ff-mt" placeholder="Surveillance Op"></div>
-            <div class="fg"><label>Outcome</label><select id="ff-oc"><option>Successful</option><option>Partially Successful</option><option>Aborted</option><option>Technical</option><option>Weather</option></select></div>
-          </div>
-          <div class="fg mt1"><label>Description</label><textarea id="ff-md" rows="2" placeholder="Mission description…"></textarea></div>
+        <div class="fsec"><div class="fsec-t">Remarks</div>
           <div class="fg"><label>Remarks</label><textarea id="ff-rem" rows="2" placeholder="Remarks…"></textarea></div>
         </div>
         <div style="display:flex;gap:.65rem;justify-content:flex-end;flex-wrap:wrap">
@@ -894,7 +895,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
   <div class="md">
     <div class="md-h"><div class="md-t">👤 Create New User</div><span class="md-x" onclick="closeMo('mo-create-user')">✕</span></div>
     <div class="frow"><div class="fg"><label>First Name *</label><input type="text" id="cu-fn" placeholder="John"></div><div class="fg"><label>Last Name *</label><input type="text" id="cu-ln" placeholder="Doe"></div></div>
-    <div class="frow"><div class="fg"><label>Service Number *</label><input type="text" id="cu-sn" placeholder="NAF/12345"></div><div class="fg"><label>Rank</label><select id="cu-rank"><option>Plt Off</option><option>Flg Off</option><option>Flt Lt</option><option>Sqn Ldr</option><option>Wg Cdr</option><option>Gp Capt</option><option>Air Cdre</option><option>AVM</option><option>ACM</option></select></div></div>
+    <div class="frow"><div class="fg"><label>Service Number *</label><input type="text" id="cu-sn" placeholder="NAF/12345"></div><div class="fg"><label>Rank</label><select id="cu-rank"><option>Fg Offr</option><option>Flt Lt</option><option>Sqn Ldr</option><option>Wg Cdr</option><option>Gp Capt</option><option>Air Cdre</option><option>AVM</option><option>Air Mshl</option><option>ACM</option></select></div></div>
     <div class="fg"><label>Email *</label><input type="email" id="cu-email" placeholder="pilot@naforce.mil.ng"></div>
     <div class="frow"><div class="fg"><label>Password *</label><input type="password" id="cu-pass" placeholder="Min 6 chars"></div><div class="fg"><label>Role *</label><select id="cu-role"><option value="pilot">Pilot</option><option value="sqn_admin">Squadron Admin</option><option value="super_admin">Super Administrator</option></select></div></div>
     <div class="frow"><div class="fg"><label>Unit</label><input type="text" id="cu-unit" placeholder="115 SOG"></div><div class="fg"><label>Squadron</label><input type="text" id="cu-sqn" placeholder="110 Sqn"></div></div>
@@ -929,7 +930,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
 <!-- Firebase SDK -->
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,sendPasswordResetEmail,}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,sendPasswordResetEmail,updatePassword,reauthenticateWithCredential,EmailAuthProvider,}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import{getFirestore,collection,doc,setDoc,getDoc,getDocs,addDoc,updateDoc,deleteDoc,query,where,orderBy,limit,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import{getStorage,ref,uploadBytes,getDownloadURL}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
@@ -1153,7 +1154,22 @@ window.confirmLogout=()=>{
   // Auto-dismiss after 8 seconds
   setTimeout(()=>{if(G('logout-confirm-toast'))G('logout-confirm-toast').remove();},8000);
 };
-window.doForgot=()=>{const e=V('l-email')||prompt('Enter your email:');if(!e)return;sendPasswordResetEmail(auth,e).then(()=>authMsg('Reset email sent','s')).catch(err=>authMsg(fErr(err),'d'));};
+window.doForgot=()=>{
+  const e=V('l-email')||prompt('Enter your registered email address:');
+  if(!e)return;
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){authMsg('Enter a valid email address','d');return;}
+  authMsg('Sending reset link…','i');
+  sendPasswordResetEmail(auth,e)
+    .then(()=>authMsg('✅ Password reset link sent to '+e+'. Check your inbox (and spam folder).','s'))
+    .catch(err=>{
+      // Don't reveal whether the email exists — generic message for unknown emails (security)
+      if(err.code==='auth/user-not-found'){
+        authMsg('If an account exists for '+e+', a reset link has been sent.','i');
+      }else{
+        authMsg(fErr(err),'d');
+      }
+    });
+};
 
 
 // ════════════════════════════════════════════
@@ -1250,12 +1266,18 @@ function isSqnAdmin(){return CP?.role==='sqn_admin'||isAdmin();}
 async function loadMyFlights(){
   if(!CU)return;
   try{
-    const q=query(collection(db,'flightLogs'),where('pilotId','==',CU.uid),orderBy('date','desc'));
+    // No orderBy here — combining where()+orderBy() on different fields requires a
+    // Firestore composite index. Sorting client-side avoids that dependency entirely.
+    const q=query(collection(db,'flightLogs'),where('pilotId','==',CU.uid));
     const snaps=await getDocs(q);
     myFlights=snaps.docs.map(d=>({id:d.id,...d.data()}));
+    myFlights.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
     filteredFlights=[...myFlights];
     renderLog();renderAc();
-  }catch(e){console.error(e);}
+  }catch(e){
+    console.error('[loadMyFlights] Failed to load flights:',e);
+    toast('Failed to load your flight logbook — check console for details','e');
+  }
 }
 
 // ════════════════════════════════════════════
@@ -1408,7 +1430,7 @@ window.viewPilotDetail=async(uid)=>{
     <div class="card">
       <div class="card-t mb2">📖 Flight Log (${pFlights.length} entries)</div>
       <div class="tw"><table><thead><tr><th>Date</th><th>Aircraft</th><th>Route</th><th>Position</th><th>Block</th><th>Hrs</th><th>Category</th></tr></thead>
-      <tbody>${pFlights.slice(0,30).map(f=>`<tr><td>${f.date||'—'}</td><td>${f.aircraftType||'—'}</td><td>${f.departure||'?'}→${f.destination||'?'}</td><td>${posLbl(f.position)}</td><td class="mono">${minsHHMM(f.blockMins||0)}</td><td class="mono gold"><strong>${(f.airborneHrs||0).toFixed(1)}</strong></td><td><span class="badge bb">${f.category||'—'}</span></td></tr>`).join('')||'<tr><td colspan="7" style="text-align:center;color:var(--text3)">No flights</td></tr>'}</tbody>
+      <tbody>${pFlights.slice(0,30).map(f=>`<tr><td>${f.date||'—'}</td><td>${f.aircraftType||'—'}</td><td>${f.departure||'?'}→${f.destination||'?'}</td><td>${posLbl(f.position)}</td><td class="mono">${minsHHMM(f.blockMins||0)}</td><td class="mono gold"><strong>${dec2hhmm(f.airborneHrs||0)}</strong></td><td><span class="badge bb">${f.category||'—'}</span></td></tr>`).join('')||'<tr><td colspan="7" style="text-align:center;color:var(--text3)">No flights</td></tr>'}</tbody>
       </table></div>
       ${pFlights.length>30?`<div class="sm mut mt1" style="text-align:center">Showing first 30 of ${pFlights.length} entries. Export for full data.</div>`:''}
     </div>
@@ -1460,6 +1482,8 @@ window.toggleStatus=async(uid,status)=>{
   const ns=status==='active'?'suspended':'active';
   await updateDoc(doc(db,'users',uid),{status:ns});
   await logAudit('USER_STATUS',uid+' → '+ns);
+  // Notify the affected pilot in Firestore (visible next time they log in / check notifications)
+  addDoc(collection(db,'notifications'),{pilotId:uid,message:ns==='suspended'?'⚠️ Your account has been suspended by an administrator.':'✅ Your account has been reactivated.',type:ns==='suspended'?'d':'s',read:false,createdAt:serverTimestamp()}).catch(()=>{});
   await loadAllUsers();
   toast('User status updated to '+ns,'s');
 };
@@ -1498,6 +1522,7 @@ window.changeRole=async(uid,currentRole)=>{
   try{
     await updateDoc(doc(db,'users',uid),{role:newRole,updatedAt:serverTimestamp()});
     await logAudit('ROLE_CHANGE',uid+' role changed from '+currentRole+' to '+newRole+' by '+CU.email);
+    addDoc(collection(db,'notifications'),{pilotId:uid,message:`Your role was changed to ${labels[newRole]} by an administrator.`,type:'i',read:false,createdAt:serverTimestamp()}).catch(()=>{});
     await loadAllUsers();
     toast('Role updated to '+labels[newRole],'s');
   }catch(e){toast(fErr(e),'e');}
@@ -1552,24 +1577,24 @@ window.loadDashboard=()=>{
   const cfBadge=hasCF?`<span title="Includes ${cfTot.toFixed(1)} hrs carry-forward" style="font-size:.6rem;background:rgba(212,175,55,.15);color:var(--gold);border:1px solid rgba(212,175,55,.3);border-radius:4px;padding:.1rem .3rem;margin-left:.3rem;vertical-align:middle">+CF</span>`:'';
 
   G('dash-stats').innerHTML=`
-    <div class="sc"><div class="sl">Total Hours</div><div class="sv">${(tot+cfTot).toFixed(1)}${cfBadge}</div><div class="su">flight hours</div><div class="si">⏱</div></div>
-    <div class="sc"><div class="sl">Captain (PIC)</div><div class="sv">${(cpt+cfCpt).toFixed(1)}${hasCF&&cfCpt>0?cfBadge:''}</div><div class="su">hrs</div><div class="si">✈</div></div>
-    <div class="sc"><div class="sl">Co-Pilot</div><div class="sv">${(cop+cfCop).toFixed(1)}${hasCF&&cfCop>0?cfBadge:''}</div><div class="su">hrs</div><div class="si">👨‍✈️</div></div>
-    <div class="sc"><div class="sl">Instructor</div><div class="sv">${ins.toFixed(1)}</div><div class="su">hrs</div><div class="si">🎓</div></div>
-    <div class="sc"><div class="sl">Student</div><div class="sv">${stu.toFixed(1)}</div><div class="su">hrs</div><div class="si">📚</div></div>
-    <div class="sc"><div class="sl">Day Flying</div><div class="sv">${day.toFixed(1)}</div><div class="su">hrs</div><div class="si">☀️</div></div>
-    <div class="sc"><div class="sl">Night Flying</div><div class="sv">${(night+cfNight).toFixed(1)}${hasCF&&cfNight>0?cfBadge:''}</div><div class="su">hrs</div><div class="si">🌙</div></div>
-    <div class="sc"><div class="sl">Instrument</div><div class="sv">${instr.toFixed(1)}</div><div class="su">hrs</div><div class="si">🎛</div></div>
-    <div class="sc"><div class="sl">Simulator</div><div class="sv">${sim.toFixed(1)}</div><div class="su">hrs</div><div class="si">🖥</div></div>
+    <div class="sc"><div class="sl">Total Hours</div><div class="sv">${dec2hhmm(tot+cfTot)}${cfBadge}</div><div class="su">flight hours</div><div class="si">⏱</div></div>
+    <div class="sc"><div class="sl">Captain (PIC)</div><div class="sv">${dec2hhmm(cpt+cfCpt)}${hasCF&&cfCpt>0?cfBadge:''}</div><div class="su">hrs</div><div class="si">✈</div></div>
+    <div class="sc"><div class="sl">Co-Pilot</div><div class="sv">${dec2hhmm(cop+cfCop)}${hasCF&&cfCop>0?cfBadge:''}</div><div class="su">hrs</div><div class="si">👨‍✈️</div></div>
+    <div class="sc"><div class="sl">Instructor</div><div class="sv">${dec2hhmm(ins)}</div><div class="su">hrs</div><div class="si">🎓</div></div>
+    <div class="sc"><div class="sl">Student</div><div class="sv">${dec2hhmm(stu)}</div><div class="su">hrs</div><div class="si">📚</div></div>
+    <div class="sc"><div class="sl">Day Flying</div><div class="sv">${dec2hhmm(day)}</div><div class="su">hrs</div><div class="si">☀️</div></div>
+    <div class="sc"><div class="sl">Night Flying</div><div class="sv">${dec2hhmm(night+cfNight)}${hasCF&&cfNight>0?cfBadge:''}</div><div class="su">hrs</div><div class="si">🌙</div></div>
+    <div class="sc"><div class="sl">Instrument</div><div class="sv">${dec2hhmm(instr)}</div><div class="su">hrs</div><div class="si">🎛</div></div>
+    <div class="sc"><div class="sl">Simulator</div><div class="sv">${dec2hhmm(sim)}</div><div class="su">hrs</div><div class="si">🖥</div></div>
     <div class="sc"><div class="sl">Total Sorties</div><div class="sv">${sorties}</div><div class="su">flights</div><div class="si">🛫</div></div>
     <div class="sc"><div class="sl">Aircraft Types</div><div class="sv">${Object.keys(acMap).length}</div><div class="su">types flown</div><div class="si">✈</div></div>
-    <div class="sc green"><div class="sl">This Month</div><div class="sv" style="color:var(--green)">${monthHrs.toFixed(1)}</div><div class="su">hrs</div><div class="si">📅</div></div>
-    ${hasCF?`<div class="sc" style="border-color:rgba(212,175,55,.3)"><div class="sl">Carry-Forward</div><div class="sv" style="color:var(--gold)">${cfTot.toFixed(1)}</div><div class="su">prior hrs</div><div class="si">🕐</div></div>`:''}
+    <div class="sc green"><div class="sl">This Month</div><div class="sv" style="color:var(--green)">${dec2hhmm(monthHrs)}</div><div class="su">hrs</div><div class="si">📅</div></div>
+    ${hasCF?`<div class="sc" style="border-color:rgba(212,175,55,.3)"><div class="sl">Carry-Forward</div><div class="sv" style="color:var(--gold)">${dec2hhmm(cfTot)}</div><div class="su">prior hrs</div><div class="si">🕐</div></div>`:''}
   `;
   drawCharts(flights,acMap);
   const recent=flights.slice(0,6);
-  G('dash-recent').innerHTML=recent.length?recent.map(f=>`<tr><td>${f.date||'—'}</td><td class="sm">${isAdmin()?(allUsers.find(u=>u.id===f.pilotId)?.fullName||f.pilotName||'—'):'Me'}</td><td><strong>${f.aircraftType||'—'}</strong></td><td class="sm">${f.departure||'?'}→${f.destination||'?'}</td><td>${posLbl(f.position)}</td><td class="mono gold"><strong>${(f.airborneHrs||0).toFixed(1)}</strong></td><td><span class="badge bb">${f.category||'—'}</span></td></tr>`).join(''):'<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:1.5rem">No flight records yet — or add your carry-forward hours in My Profile</td></tr>';
-  G('pc-hrs').textContent=(myFlights.reduce((a,f)=>a+(f.airborneHrs||0),0)+cfTot).toFixed(1);
+  G('dash-recent').innerHTML=recent.length?recent.map(f=>`<tr><td>${f.date||'—'}</td><td class="sm">${isAdmin()?(allUsers.find(u=>u.id===f.pilotId)?.fullName||f.pilotName||'—'):'Me'}</td><td><strong>${f.aircraftType||'—'}</strong></td><td class="sm">${f.departure||'?'}→${f.destination||'?'}</td><td>${posLbl(f.position)}</td><td class="mono gold"><strong>${dec2hhmm(f.airborneHrs||0)}</strong></td><td><span class="badge bb">${f.category||'—'}</span></td></tr>`).join(''):'<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:1.5rem">No flight records yet — or add your carry-forward hours in My Profile</td></tr>';
+  G('pc-hrs').textContent=dec2hhmm(myFlights.reduce((a,f)=>a+(f.airborneHrs||0),0)+cfTot);
   renderAlerts();
 };
 
@@ -1593,6 +1618,7 @@ function drawCharts(flights,acMap){
   charts.ac=new Chart(G('ch-ac'),{type:'bar',data:{labels:acLbls.length?acLbls:['No Data'],datasets:[{label:'Hours',data:acVals.length?acVals:[0],backgroundColor:'rgba(59,130,246,0.5)',borderColor:'#3B82F6',borderWidth:1}]},options:{indexAxis:'y',...cOpts()}});
 }
 
+let _medNotifSent=false;
 function renderAlerts(){
   const alerts=[];
   if(medRecs.length){const m=medRecs[0];const d=daysToExpiry(m.expiryDate);if(d<0)alerts.push({t:'EXPIRED: Medical certificate expired on '+m.expiryDate,'cls':'al-d'});else if(d<90)alerts.push({t:`Medical certificate expires in ${d} days (${m.expiryDate})`,'cls':'al-w'});}
@@ -1601,6 +1627,13 @@ function renderAlerts(){
     if(exp>0)alerts.push({t:`${exp} pilot(s) have EXPIRED medical certificates`,'cls':'al-d'});
   }
   G('dash-alerts').innerHTML=alerts.map(a=>`<div class="alert ${a.cls} mb1">⚠️ ${a.t}</div>`).join('');
+  // Push medical alerts to the notification center once per session (avoid spamming on every dashboard refresh)
+  if(!_medNotifSent&&medRecs.length){
+    const m=medRecs[0];const d=daysToExpiry(m.expiryDate);
+    if(d<0)addNotif('⚠️ Your medical certificate EXPIRED on '+m.expiryDate,'d');
+    else if(d<90)addNotif(`⚠️ Your medical certificate expires in ${d} days (${m.expiryDate})`,'w');
+    _medNotifSent=true;
+  }
 }
 
 // ════════════════════════════════════════════
@@ -1626,14 +1659,14 @@ window.submitFlight=async()=>{
     instructorHrs:pos==='instructor'?aHrs:0,studentHrs:pos==='student'?aHrs:0,
     isDay:G('ff-day').checked,isNight:G('ff-night').checked,isInstrument:G('ff-ifr').checked,isSimulator:G('ff-sim').checked,
     dayHrs:G('ff-day').checked?aHrs:0,nightHrs:G('ff-night').checked?aHrs:0,instrumentHrs:G('ff-ifr').checked?aHrs:0,simulatorHrs:G('ff-sim').checked?aHrs:0,
-    crewCaptain:V('ff-c-cpt'),crewCopilot:V('ff-c-cop'),crewInstructor:V('ff-c-ins'),crewStudent:V('ff-c-stu'),
-    missionNumber:V('ff-mn'),missionTitle:V('ff-mt'),missionDescription:V('ff-md'),missionOutcome:V('ff-oc'),remarks:V('ff-rem'),
+    remarks:V('ff-rem'),
     createdAt:serverTimestamp()
   };
   try{
-    await addDoc(collection(db,'flightLogs'),entry);
+    const ref=await addDoc(collection(db,'flightLogs'),entry);
     await logAudit('FLIGHT_ENTRY',ac+' '+date+' '+aHrs+'hrs');
-    sheetsLogFlight({...flightData,id:ref?.id},CP?.fullName);
+    sheetsLogFlight({...entry,id:ref?.id},CP?.fullName);
+    addNotif(`Flight logged: ${ac} on ${date} — ${dec2hhmm(aHrs)} airborne`,'s');
     toast('Flight entry saved','s');clearFlight();
     await loadMyFlights();if(isAdmin())await loadAllFlights();
     goPanel('logbook');
@@ -1661,8 +1694,8 @@ window.calcTimes=()=>{
 };
 
 window.clearFlight=()=>{
-  ['ff-date','ff-reg','ff-route','ff-es','ff-to','ff-ld','ff-ep','ff-c-cpt','ff-c-cop','ff-c-ins','ff-c-stu','ff-mn','ff-mt','ff-md','ff-rem'].forEach(id=>G(id)&&(G(id).value=''));
-  G('ff-ac').value='';G('ff-cat').value='Training';G('ff-pos').value='captain';G('ff-oc').value='Successful';
+  ['ff-date','ff-reg','ff-route','ff-es','ff-to','ff-ld','ff-ep','ff-rem'].forEach(id=>G(id)&&(G(id).value=''));
+  G('ff-ac').value='';G('ff-cat').value='Training';G('ff-pos').value='captain';
   G('ff-day').checked=true;G('ff-night').checked=false;G('ff-ifr').checked=false;G('ff-sim').checked=false;
   G('d-block').textContent='--:--';G('d-air').textContent='--:--';G('d-hrs').textContent='0.0';
   G('ff-msg').innerHTML='';
@@ -1693,7 +1726,7 @@ function renderLog(){
       <td>${f.departure||'?'}→${f.destination||'?'}</td>
       <td>${posLbl(f.position)}</td>
       <td class="mono">${minsHHMM(f.blockMins||0)}</td>
-      <td class="mono gold"><strong>${(f.airborneHrs||0).toFixed(1)}</strong></td>
+      <td class="mono gold"><strong>${dec2hhmm(f.airborneHrs||0)}</strong></td>
       <td>${condBadges(f)}</td>
       <td><span class="badge bb">${f.category||'—'}</span></td>
       <td><button class="btn btn-outline btn-xs" onclick="event.stopPropagation();flightDetail('${f.id}')">View</button></td>
@@ -1715,7 +1748,7 @@ window.flightDetail=async(id)=>{
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:.75rem">
       <div class="sc"><div class="sl">Block Time</div><div class="sv">${minsHHMM(f.blockMins||0)}</div></div>
       <div class="sc"><div class="sl">Airborne</div><div class="sv">${minsHHMM(f.airborneMins||0)}</div></div>
-      <div class="sc"><div class="sl">Hours</div><div class="sv">${(f.airborneHrs||0).toFixed(1)}</div></div>
+      <div class="sc"><div class="sl">Hours</div><div class="sv">${dec2hhmm(f.airborneHrs||0)}</div></div>
     </div>
     ${f.missionNumber?`<div class="dv"></div><div class="sm mt1"><strong>Mission:</strong> ${f.missionNumber} — ${f.missionTitle||''}</div>${f.missionDescription?`<div class="sm mut mt1">${f.missionDescription}</div>`:''}${f.missionOutcome?`<span class="badge ${f.missionOutcome==='Successful'?'bg':'ba'} mt1">${f.missionOutcome}</span>`:''}`:''}
     ${f.remarks?`<div class="dv"></div><div class="sm"><span class="mut">Remarks:</span> ${f.remarks}</div>`:''}
@@ -1772,8 +1805,13 @@ function renderAc(){
 // ════════════════════════════════════════════
 async function loadMed(){
   if(!CU)return;
-  try{const q=query(collection(db,'medicalRecords'),where('pilotId','==',CU.uid),orderBy('examDate','desc'));
-  const s=await getDocs(q);medRecs=s.docs.map(d=>({id:d.id,...d.data()}));renderMed();}catch(e){console.error(e);}
+  try{
+    const q=query(collection(db,'medicalRecords'),where('pilotId','==',CU.uid));
+    const s=await getDocs(q);
+    medRecs=s.docs.map(d=>({id:d.id,...d.data()}));
+    medRecs.sort((a,b)=>(b.examDate||'').localeCompare(a.examDate||''));
+    renderMed();
+  }catch(e){console.error('[loadMed]',e);}
 }
 
 function renderMed(){
@@ -1864,7 +1902,13 @@ window.delDoc=async(id)=>{if(!confirm('Delete document?'))return;await deleteDoc
 // ════════════════════════════════════════════
 async function loadNotifs(){
   if(!CU)return;
-  try{const q=query(collection(db,'notifications'),where('pilotId','==',CU.uid),orderBy('createdAt','desc'),limit(50));const s=await getDocs(q);notifs=s.docs.map(d=>({id:d.id,...d.data()}));renderNotifs();}catch(e){}
+  try{
+    const q=query(collection(db,'notifications'),where('pilotId','==',CU.uid),limit(50));
+    const s=await getDocs(q);
+    notifs=s.docs.map(d=>({id:d.id,...d.data()}));
+    notifs.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    renderNotifs();
+  }catch(e){console.error('[loadNotifs]',e);}
 }
 function addNotif(msg,type='i'){
   notifs.unshift({message:msg,type,read:false,createdAt:{toDate:()=>new Date()}});
@@ -1909,6 +1953,43 @@ window.handlePhoto=async(ev)=>{
   const file=ev.target.files[0];if(!file)return;if(file.size>2097152){toast('File too large (max 2MB)','e');return;}
   try{const sr=ref(storage,`photos/${CU.uid}/profile`);const sn=await uploadBytes(sr,file);const url=await getDownloadURL(sn.ref);await updateDoc(doc(db,'users',CU.uid),{photoURL:url});CP.photoURL=url;G('pphoto-disp').innerHTML=`<img src="${url}">`;updateSidebar();toast('Photo uploaded','s');}catch(e){toast(e.message,'e');}
 };
+
+// ════════════════════════════════════════════
+// CHANGE PASSWORD (logged-in users)
+// ════════════════════════════════════════════
+window.changePassword=async()=>{
+  const current=V('cp-current'),next=V('cp-new'),confirm=V('cp-confirm');
+  if(!current||!next||!confirm){showMsg('cp-msg','All fields are required','d');return;}
+  if(next.length<6){showMsg('cp-msg','New password must be at least 6 characters','d');return;}
+  if(next!==confirm){showMsg('cp-msg','New password and confirmation do not match','d');return;}
+  if(next===current){showMsg('cp-msg','New password must be different from current password','d');return;}
+
+  const btn=document.querySelector('#panel-profile .card:nth-of-type(1) .btn-gold');
+  showMsg('cp-msg','Updating password…','i');
+
+  try{
+    // Firebase requires a recent login for sensitive operations like password change.
+    // Re-authenticate with the current password first.
+    const cred=EmailAuthProvider.credential(CU.email,current);
+    await reauthenticateWithCredential(CU,cred);
+    await updatePassword(CU,next);
+    await logAudit('PASSWORD_CHANGE',CU.email+' changed their password');
+    addNotif('🔒 Your password was changed successfully.','s');
+    showMsg('cp-msg','✅ Password updated successfully!','s');
+    toast('Password changed','s');
+    // Clear the fields
+    ['cp-current','cp-new','cp-confirm'].forEach(id=>{if(G(id))G(id).value='';});
+  }catch(e){
+    if(e.code==='auth/wrong-password'||e.code==='auth/invalid-credential'){
+      showMsg('cp-msg','Current password is incorrect','d');
+    }else if(e.code==='auth/too-many-requests'){
+      showMsg('cp-msg','Too many attempts. Please wait a moment and try again.','d');
+    }else{
+      showMsg('cp-msg',fErr(e),'d');
+    }
+  }
+};
+
 // ════════════════════════════════════════════
 // GOOGLE SHEETS BACKUP
 // ════════════════════════════════════════════
@@ -2269,7 +2350,7 @@ window.saveSettings=async()=>{
 window.addAcType=()=>{const t=V('s-new-ac').trim();if(!t)return;settings.aircraftTypes.push(t);G('s-new-ac').value='';renderAcTypes();populateAcSelect();populateCFAcSelect();toast('Aircraft type added — save settings to persist','i');};
 function renderAcTypes(){G('ac-types-list')&&(G('ac-types-list').innerHTML=settings.aircraftTypes.map((t,i)=>`<span class="tag" style="cursor:pointer" onclick="removeAc(${i})">${t} ✕</span>`).join(''));}
 window.removeAc=(i)=>{settings.aircraftTypes.splice(i,1);renderAcTypes();populateAcSelect();};
-function renderRankList(){G('rank-list')&&(G('rank-list').innerHTML=['ACM','AVM','AirMsh','Air Cdre','Gp Capt','Wg Cdr','Sqn Ldr','Flt Lt','Flg Off','Plt Off','WO','FS','Sgt','Cpl'].map(r=>`<span class="tag">${r}</span>`).join(''));}
+function renderRankList(){G('rank-list')&&(G('rank-list').innerHTML=['Fg Offr','Flt Lt','Sqn Ldr','Wg Cdr','Gp Capt','Air Cdre','AVM','Air Mshl','ACM'].map(r=>`<span class="tag">${r}</span>`).join(''));}
 function renderThresholds(){G('thresholds-list')&&(G('thresholds-list').innerHTML=settings.notifDays.map(d=>`<label style="display:flex;align-items:center;gap:.3rem;cursor:pointer"><input type="checkbox" checked onchange="toggleThresh(${d},this.checked)"> ${d} days</label>`).join(''));}
 window.toggleThresh=(d,on)=>{if(on&&!settings.notifDays.includes(d))settings.notifDays.push(d);else if(!on)settings.notifDays=settings.notifDays.filter(x=>x!==d);};
 window.previewLogo=(inputId,previewId)=>{const f=G(inputId).files[0];if(!f)return;const r=new FileReader();r.onload=e=>{G(previewId).innerHTML=`<img src="${e.target.result}" style="height:50px;margin-top:.4rem;border-radius:4px">`;};r.readAsDataURL(f);};
@@ -2380,7 +2461,7 @@ function buildPDF(type,flights,user){
     flights.slice(0,80).forEach(f=>{
       if(y>274){P.addPage();y=20;}x=14;
       const pName=type==='fleet'?(allUsers.find(u=>u.id===f.pilotId)?.fullName||f.pilotName||'—').substring(0,14):'Self';
-      [f.date||'',pName,f.aircraftType||'',`${f.departure||'?'}→${f.destination||'?'}`,f.position?.substring(0,3)||'',minsHHMM(f.blockMins||0),(f.airborneHrs||0).toFixed(1),f.category||''].forEach((v2,i)=>{P.text(String(v2).substring(0,Math.floor(cw[i]/2.2)),x,y);x+=cw[i];});y+=4.5;
+      [f.date||'',pName,f.aircraftType||'',`${f.departure||'?'}→${f.destination||'?'}`,f.position?.substring(0,3)||'',minsHHMM(f.blockMins||0),dec2hhmm(f.airborneHrs||0),f.category||''].forEach((v2,i)=>{P.text(String(v2).substring(0,Math.floor(cw[i]/2.2)),x,y);x+=cw[i];});y+=4.5;
     });
   }
   P.setFontSize(7);P.setTextColor(150,150,150);P.text('115 SOG Pilot E-Flight Log Book System — OFFICIAL USE ONLY — '+settings.org,14,287);
@@ -2538,6 +2619,9 @@ window.goPanel=(id)=>{
   if(id==='profile')fillProfile();
   if(id==='settings'&&isAdmin()){renderUsers();renderAudit();}
   if(id==='all-pilots')renderPilotsList();
+  if(id==='logbook')filterLog();
+  if(id==='aircraft')renderAc();
+  if(id==='notifications')renderNotifs();
 };
 
 window.toggleSidebar=()=>{
