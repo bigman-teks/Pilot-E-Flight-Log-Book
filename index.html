@@ -470,7 +470,8 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
               <div><span style="color:rgba(255,255,255,.45)">License:</span> <span id="pc-lic" style="color:#fff">—</span></div>
               <div><span style="color:rgba(255,255,255,.45)">IR Exp:</span> <span id="pc-ir" style="color:#fff">—</span></div>
               <div><span style="color:rgba(255,255,255,.45)">Medical:</span> <span id="pc-med" style="color:#34d399">VALID</span></div>
-              <div><span style="color:rgba(255,255,255,.45)">Total Hrs:</span> <span id="pc-hrs" style="color:var(--gold);font-weight:800">0.0</span></div>
+              <div><span style="color:rgba(255,255,255,.45)">Total Hrs:</span> <span id="pc-hrs" style="color:var(--gold);font-weight:800">00:00</span></div>
+              <div><span style="color:rgba(255,255,255,.45)">Age:</span> <span id="pc-age" style="color:#fff">—</span></div>
             </div>
           </div>
           <div class="card">
@@ -597,7 +598,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
             <div class="fg"><label>Departure *</label><input type="text" id="ff-dep" placeholder="DNAA"></div>
             <div class="fg"><label>Destination *</label><input type="text" id="ff-dest" placeholder="DNKN"></div>
             <div class="fg"><label>Route</label><input type="text" id="ff-route"></div>
-            <div class="fg"><label>Category *</label><select id="ff-cat"><option>Training</option><option>Operational</option></select></div>
+            <div class="fg"><label>Category *</label><select id="ff-cat"><option>Training</option><option>Operational</option><option>Ptl</option><option>AR</option><option>FCF</option><option>SOF</option><option>Liason</option><option>Ferry</option><option>AE</option><option>ISR</option><option>CSAR</option><option>SCT</option><option>CAS</option><option>AI</option><option>Grnd Run</option></select></div>
           </div>
         </div>
         <div class="fsec"><div class="fsec-t">Timings</div>
@@ -648,7 +649,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:poin
       <div class="card mb1">
         <div style="display:flex;gap:.65rem;flex-wrap:wrap;align-items:center">
           <div class="search-wrap"><span class="search-ic">🔍</span><input type="text" id="log-s" placeholder="Search…" oninput="filterLog()"></div>
-          <select class="pill-select" id="log-cat" onchange="filterLog()"><option value="">All Categories</option><option>Training</option><option>Operational</option></select>
+          <select class="pill-select" id="log-cat" onchange="filterLog()"><option value="">All Categories</option><option>Training</option><option>Operational</option><option>Ptl</option><option>AR</option><option>FCF</option><option>SOF</option><option>Liason</option><option>Ferry</option><option>AE</option><option>ISR</option><option>CSAR</option><option>SCT</option><option>CAS</option><option>AI</option><option>Grnd Run</option></select>
           <select class="pill-select" id="log-pos" onchange="filterLog()"><option value="">All Positions</option><option value="captain">Captain</option><option value="copilot">Co-Pilot</option><option value="instructor">Instructor</option><option value="student">Student</option></select>
           <input type="month" class="pill-select" id="log-month" onchange="filterLog()">
         </div>
@@ -1944,6 +1945,23 @@ function updatePcard(){
   G('pc-sn').textContent='SN: '+(V('pf-sn')||CP?.serviceNumber||'—');
   G('pc-unit').textContent=(V('pf-unit')||CP?.unit||'')+(V('pf-sqn')||CP?.squadron?', '+(V('pf-sqn')||CP.squadron):'');
   G('pc-lic').textContent=V('pf-lic')||CP?.licenseNumber||'—';G('pc-ir').textContent=V('pf-ir-exp')||CP?.irExpiry||'—';
+  // Total Hrs — calculated independently here so it's always correct even if Dashboard hasn't loaded yet
+  const flightHrs=myFlights.reduce((a,f)=>a+(f.airborneHrs||0),0);
+  const cfHrs=Object.values(CP?.carryForward||{}).reduce((s,h)=>s+(parseFloat(h.total)||0),0);
+  if(G('pc-hrs'))G('pc-hrs').textContent=dec2hhmm(flightHrs+cfHrs);
+  // Age — calculated from Date of Birth
+  const dob=V('pf-dob')||CP?.dob||'';
+  if(G('pc-age')){
+    if(dob){
+      const birth=new Date(dob);const today=new Date();
+      let age=today.getFullYear()-birth.getFullYear();
+      const m=today.getMonth()-birth.getMonth();
+      if(m<0||(m===0&&today.getDate()<birth.getDate()))age--;
+      G('pc-age').textContent=age+' yrs';
+    }else{
+      G('pc-age').textContent='—';
+    }
+  }
 }
 window.saveProfile=async()=>{
   const data={serviceNumber:V('pf-sn'),rank:V('pf-rank'),firstName:V('pf-fn'),lastName:V('pf-ln'),fullName:(V('pf-fn')+' '+V('pf-ln')).trim(),dob:V('pf-dob'),gender:V('pf-gender'),unit:V('pf-unit'),squadron:V('pf-sqn'),phone:V('pf-phone'),email:V('pf-email'),licenseNumber:V('pf-lic'),licenseIssue:V('pf-lic-iss'),licenseExpiry:V('pf-lic-exp'),irExpiry:V('pf-ir-exp'),updatedAt:serverTimestamp()};
