@@ -1410,13 +1410,13 @@ window.viewPilotDetail=async(uid)=>{
       </div>
       <div class="card">
         <div class="sg" style="grid-template-columns:repeat(2,1fr);gap:.5rem">
-          <div class="sc"><div class="sl">Total Hours</div><div class="sv">${tot.toFixed(1)}</div></div>
-          <div class="sc"><div class="sl">Captain</div><div class="sv">${cpt.toFixed(1)}</div></div>
-          <div class="sc"><div class="sl">Co-Pilot</div><div class="sv">${cop.toFixed(1)}</div></div>
-          <div class="sc"><div class="sl">Instructor</div><div class="sv">${ins.toFixed(1)}</div></div>
-          <div class="sc"><div class="sl">Day</div><div class="sv">${day.toFixed(1)}</div></div>
-          <div class="sc"><div class="sl">Night</div><div class="sv">${night.toFixed(1)}</div></div>
-          <div class="sc"><div class="sl">Instrument</div><div class="sv">${instr.toFixed(1)}</div></div>
+          <div class="sc"><div class="sl">Total Hours</div><div class="sv">${dec2hhmm(tot)}</div></div>
+          <div class="sc"><div class="sl">Captain</div><div class="sv">${dec2hhmm(cpt)}</div></div>
+          <div class="sc"><div class="sl">Co-Pilot</div><div class="sv">${dec2hhmm(cop)}</div></div>
+          <div class="sc"><div class="sl">Instructor</div><div class="sv">${dec2hhmm(ins)}</div></div>
+          <div class="sc"><div class="sl">Day</div><div class="sv">${dec2hhmm(day)}</div></div>
+          <div class="sc"><div class="sl">Night</div><div class="sv">${dec2hhmm(night)}</div></div>
+          <div class="sc"><div class="sl">Instrument</div><div class="sv">${dec2hhmm(instr)}</div></div>
           <div class="sc"><div class="sl">Sorties</div><div class="sv">${pFlights.length}</div></div>
         </div>
       </div>
@@ -1424,7 +1424,7 @@ window.viewPilotDetail=async(uid)=>{
     <div class="card mb2">
       <div class="card-t mb2">✈ Aircraft Experience</div>
       <div class="tw"><table><thead><tr><th>Aircraft</th><th>Sorties</th><th>Captain</th><th>Co-Pilot</th><th>Instructor</th><th>Student</th><th>Total</th></tr></thead>
-      <tbody>${Object.entries(acMap).map(([t,a])=>`<tr><td><strong>${t}</strong></td><td>${a.s}</td><td class="mono">${a.c.toFixed(1)}</td><td class="mono">${a.cop.toFixed(1)}</td><td class="mono">${a.i.toFixed(1)}</td><td class="mono">${a.st.toFixed(1)}</td><td class="mono gold"><strong>${(a.c+a.cop+a.i+a.st).toFixed(1)}</strong></td></tr>`).join('')||'<tr><td colspan="7" style="text-align:center;color:var(--text3)">No data</td></tr>'}</tbody>
+      <tbody>${Object.entries(acMap).map(([t,a])=>`<tr><td><strong>${t}</strong></td><td>${a.s}</td><td class="mono">${dec2hhmm(a.c)}</td><td class="mono">${dec2hhmm(a.cop)}</td><td class="mono">${dec2hhmm(a.i)}</td><td class="mono">${dec2hhmm(a.st)}</td><td class="mono gold"><strong>${dec2hhmm(a.c+a.cop+a.i+a.st)}</strong></td></tr>`).join('')||'<tr><td colspan="7" style="text-align:center;color:var(--text3)">No data</td></tr>'}</tbody>
       </table></div>
     </div>
     <div class="card">
@@ -1574,7 +1574,7 @@ window.loadDashboard=()=>{
     acMap[ac].cop+=parseFloat(h.cop)||0;
   });
   const hasCF=cfTot>0;
-  const cfBadge=hasCF?`<span title="Includes ${cfTot.toFixed(1)} hrs carry-forward" style="font-size:.6rem;background:rgba(212,175,55,.15);color:var(--gold);border:1px solid rgba(212,175,55,.3);border-radius:4px;padding:.1rem .3rem;margin-left:.3rem;vertical-align:middle">+CF</span>`:'';
+  const cfBadge=hasCF?`<span title="Includes ${dec2hhmm(cfTot)} carry-forward" style="font-size:.6rem;background:rgba(212,175,55,.15);color:var(--gold);border:1px solid rgba(212,175,55,.3);border-radius:4px;padding:.1rem .3rem;margin-left:.3rem;vertical-align:middle">+CF</span>`:'';
 
   G('dash-stats').innerHTML=`
     <div class="sc"><div class="sl">Total Hours</div><div class="sv">${dec2hhmm(tot+cfTot)}${cfBadge}</div><div class="su">flight hours</div><div class="si">⏱</div></div>
@@ -2270,7 +2270,7 @@ window.updateCFField=(ac,field,val)=>{
 function updateCFTotal(){
   const totalDec=Object.values(cfData).reduce((s,h)=>s+(parseFloat(h.total)||0),0);
   const el=G('cf-total-display');
-  if(el)el.innerHTML=`Total carry-forward: <strong style="color:var(--gold)">${dec2hhmm(totalDec)}</strong> (${totalDec.toFixed(1)} hrs decimal) across ${Object.keys(cfData).length} aircraft type${Object.keys(cfData).length!==1?'s':''}`;
+  if(el)el.innerHTML=`Total carry-forward: <strong style="color:var(--gold)">${dec2hhmm(totalDec)}</strong> across ${Object.keys(cfData).length} aircraft type${Object.keys(cfData).length!==1?'s':''}`;
 }
 
 window.addCFRow=()=>{
@@ -2305,7 +2305,7 @@ window.saveCF=async()=>{
     Object.assign(CP,{carryForward:cfData});
     await logAudit('CARRY_FORWARD_UPDATE','Carry-forward hours updated');
     const total=Object.values(cfData).reduce((s,h)=>s+(parseFloat(h.total)||0),0);
-    showMsg('cf-msg',`✅ Saved! ${total.toFixed(1)} carry-forward hours across ${Object.keys(cfData).length} aircraft type(s).`,'s');
+    showMsg('cf-msg',`✅ Saved! ${dec2hhmm(total)} carry-forward hours across ${Object.keys(cfData).length} aircraft type(s).`,'s');
     sheetsLogCarryForward(CU.uid, CP?.fullName, cfData);
     toast('Carry-forward hours saved','s');
     // Refresh dashboard stats so totals update immediately
